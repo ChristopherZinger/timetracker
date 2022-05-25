@@ -9,9 +9,6 @@ const Nav = () => {
 	return (
 		<nav>
 			<ul>
-				<li>
-					<Link href={'/'}>home</Link>
-				</li>
 				{user && (
 					<>
 						<li>
@@ -29,9 +26,14 @@ const Nav = () => {
 					</>
 				)}
 				{!user && (
-					<li>
-						<Link href={'/login'}>login</Link>
-					</li>
+					<>
+						<li>
+							<Link href={'/'}>home</Link>
+						</li>
+						<li>
+							<Link href={'/login'}>login</Link>
+						</li>
+					</>
 				)}
 			</ul>
 		</nav>

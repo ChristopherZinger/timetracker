@@ -54,7 +54,7 @@ Login.getLayout = function getLayout(page: ReactElement) {
     <UserProvider>
       <UserContext.Consumer>
         {({ user }) => {
-          user !== null && push("/");
+          user !== null && push("/timetracker");
           return !user ? <>{page}</> : <LoadingBox />;
         }}
       </UserContext.Consumer>
