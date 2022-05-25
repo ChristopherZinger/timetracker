@@ -19,7 +19,6 @@ type Props = {
 const UserProvider = ({ children }: Props) => {
 	const auth = getAuth()
 	const [user, setUser] = useState<UserStatus>(undefined)
-	const { push } = useRouter()
 
 	onAuthStateChanged(auth, (_user) => {
 		setUser(_user)

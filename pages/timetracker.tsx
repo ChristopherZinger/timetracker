@@ -1,4 +1,6 @@
+import { useRouter } from "next/router";
 import { ReactElement, useContext, useEffect, useState } from "react";
+import LoadingBox from "../components/LoadingBox";
 import Nav from "../components/Nav";
 import { UserContext, UserProvider } from "../components/UserContext";
 
@@ -12,5 +14,15 @@ export default function Timetracker() {
 }
 
 Timetracker.getLayout = function getLayout(page: ReactElement) {
-  return <UserProvider>{page}</UserProvider>;
+  const { push } = useRouter();
+  return (
+    <UserProvider>
+      <UserContext.Consumer>
+        {({ user }) => {
+          user === null && push("/");
+          return user ? <>{page}</> : <LoadingBox />;
+        }}
+      </UserContext.Consumer>
+    </UserProvider>
+  );
 };

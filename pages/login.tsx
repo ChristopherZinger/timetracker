@@ -1,8 +1,11 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, ReactElement, useState } from "react";
 import Nav from "../components/Nav";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { UserContext, UserProvider } from "../components/UserContext";
+import { useRouter } from "next/router";
+import LoadingBox from "../components/LoadingBox";
 
-const Login = () => {
+export default function Login() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
@@ -43,6 +46,18 @@ const Login = () => {
       </form>
     </div>
   );
-};
+}
 
-export default Login;
+Login.getLayout = function getLayout(page: ReactElement) {
+  const { push } = useRouter();
+  return (
+    <UserProvider>
+      <UserContext.Consumer>
+        {({ user }) => {
+          user !== null && push("/");
+          return !user ? <>{page}</> : <LoadingBox />;
+        }}
+      </UserContext.Consumer>
+    </UserProvider>
+  );
+};
