@@ -15,6 +15,9 @@ const Nav = () => {
 							<Link href={'/timetracker'}>timetracker</Link>
 						</li>
 						<li>
+							<Link href={'/categories'}>categories</Link>
+						</li>
+						<li>
 							<span
 								onClick={() => {
 									signOut(getAuth())
