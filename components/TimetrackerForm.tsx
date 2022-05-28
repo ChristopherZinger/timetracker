@@ -1,6 +1,8 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { TCategory } from '../types/domains/Category'
 import { TTrackerInput } from '../types/domains/Timetracker'
+import { TimeUtils } from '../types/utils/time'
+import { useTick } from './timer/Tick'
 
 type Props = {
 	start: number
@@ -8,24 +10,30 @@ type Props = {
 	categories: TCategory[]
 }
 
-const initialValues: TTrackerInput = {
-	start: new Date().getTime(),
-	end: new Date().getTime(),
-	category: '',
-	info: ''
-}
-
 export default function TimetrackerForm({
 	start,
 	onSubmit,
 	categories
 }: Props) {
+	const initialValues: TTrackerInput = {
+		start,
+		end: new Date().getTime(),
+		category: categories[0].id,
+		info: ''
+	}
 	const [formValues, setFormValues] = useState<TTrackerInput>(initialValues)
+	const [shouldTickRun, setShouldTickRun] = useState(true)
+	const stopTick = () => setShouldTickRun(false)
+	const startTick = () => setShouldTickRun(true)
+	const tick = useTick()
 
 	useEffect(() => {
 		handleInputChange('start', start)
-		handleInputChange('category', categories[0].id)
-	}, [start, categories])
+	}, [start])
+
+	useEffect(() => {
+		shouldTickRun && handleInputChange('end', new Date().getTime())
+	}, [tick])
 
 	const handleInputChange = (
 		key: keyof TTrackerInput,
@@ -36,15 +44,28 @@ export default function TimetrackerForm({
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault()
-		const finalData = {
-			...formValues,
-			end: new Date().getTime()
-		}
-		onSubmit(finalData)
+		onSubmit(formValues)
+		startTick()
 	}
 
 	return (
 		<form onSubmit={handleSubmit}>
+			<div>
+				<input
+					type='time'
+					name='end'
+					id='end'
+					value={TimeUtils.timestampToHourMinute(formValues.end)}
+					onChange={({ target }) => {
+						stopTick()
+						const [hours, minutes] = target.value.split(':')
+						const date = new Date()
+						date.setHours(parseInt(hours)) // todo validate hours before
+						date.setMinutes(parseInt(minutes))
+						handleInputChange('end', date.getTime())
+					}}
+				/>
+			</div>
 			<div>
 				<label htmlFor='category'>Category</label>
 				<select
