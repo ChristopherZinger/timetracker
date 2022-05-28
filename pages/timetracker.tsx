@@ -11,20 +11,30 @@ import TimetrackerForm from "../components/TimetrackerForm";
 import { UserContext, UserProvider } from "../components/UserContext";
 import { TTracker, TTrackerInput } from "../types/domains/Timetracker";
 import { TimeUtils } from "../types/utils/time";
+import { maxBy } from "lodash";
 
 export default function Timetracker() {
-  const [trackers, setTrackers] = useState<TTracker[]>([]);
+  const [trackers, setTrackers] = useState<undefined | TTracker[]>(undefined);
   const [now, setNow] = useState<number>(new Date().getTime());
   const [start, setStart] = useState<number | undefined>(undefined);
   const tick = useTick();
-  const { data: categories } = useGetActiveCategories();
-  const { data: todaysTrackers } = useGetTodaysTrackers();
+  const { data: categories, isLoading: isLoadingCategories } =
+    useGetActiveCategories();
+  const { data: todaysTrackers, isLoading: isLoadingTrackers } =
+    useGetTodaysTrackers();
 
   useEffect(() => {
-    if (todaysTrackers) {
-      setTrackers(todaysTrackers);
+    if (!todaysTrackers) {
+      return;
     }
-  }, todaysTrackers);
+    if (todaysTrackers.length) {
+      setTrackers(todaysTrackers);
+      setStart(maxBy(todaysTrackers, "end")?.end);
+    } else {
+      setTrackers([]);
+      setStart(new Date().getTime());
+    }
+  }, [todaysTrackers]);
 
   useEffect(() => {
     setNow(tick);
@@ -37,10 +47,14 @@ export default function Timetracker() {
   const onSubmitNewItem = (item: TTrackerInput) => {
     const id = Math.floor(Math.random() * 1000).toString();
     const tracker = { id, ...item };
-    const list = [...trackers, tracker];
+    const list = [...(trackers || []), tracker];
     setStart(item.end);
     setTrackers(list);
   };
+
+  if (isLoadingCategories || isLoadingTrackers) {
+    return <div>loading data</div>;
+  }
 
   return (
     <div>
@@ -52,7 +66,7 @@ export default function Timetracker() {
       </section>
 
       <section>
-        {start && categories ? (
+        {start && categories && trackers ? (
           <TimetrackerForm
             start={start}
             onSubmit={onSubmitNewItem}
