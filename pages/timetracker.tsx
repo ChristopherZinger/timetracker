@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect, useState } from "react";
+import useGetActiveCategories from "../components/apiHooks/getActiveCategories";
 import LoadingBox from "../components/LoadingBox";
 import Nav from "../components/Nav";
 import { useTick } from "../components/timer/Tick";
@@ -15,12 +16,11 @@ export default function Timetracker() {
   const [now, setNow] = useState<number>(new Date().getTime());
   const [start, setStart] = useState<number | undefined>(undefined);
   const tick = useTick();
+  const { data: categories } = useGetActiveCategories();
 
   useEffect(() => {
     setNow(tick);
   }, [tick]);
-
-  const formatTime = (timestamp: number) => dayjs(timestamp).format("HH:mm");
 
   const handleStartDay = () => {
     setStart(new Date().getTime());
@@ -30,6 +30,7 @@ export default function Timetracker() {
     const id = Math.floor(Math.random() * 1000).toString();
     const tracker = { id, ...item };
     const list = [...trackers, tracker];
+    setStart(item.end);
     setTrackers(list);
   };
 
@@ -37,12 +38,16 @@ export default function Timetracker() {
     <div>
       <Nav />
       <section>
-        <TimetrackerList list={trackers} />
+        <TimetrackerList list={trackers} categories={categories} />
       </section>
 
       <section>
-        {start ? (
-          <TimetrackerForm start={start} onSubmit={onSubmitNewItem} />
+        {start && categories ? (
+          <TimetrackerForm
+            start={start}
+            onSubmit={onSubmitNewItem}
+            categories={categories}
+          />
         ) : (
           <div>
             <button onClick={handleStartDay}>Start Day</button>

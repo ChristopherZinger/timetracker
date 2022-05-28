@@ -1,67 +1,67 @@
 import { FormEvent, useEffect, useState } from 'react'
+import { TCategory } from '../types/domains/Category'
 import { TTrackerInput } from '../types/domains/Timetracker'
 
 type Props = {
 	start: number
 	onSubmit: (data: TTrackerInput) => void
+	categories: TCategory[]
 }
 
 const initialValues: TTrackerInput = {
 	start: new Date().getTime(),
 	end: new Date().getTime(),
-	category: 'asdf',
+	category: '',
 	info: ''
 }
 
-export default function TimetrackerForm({ start, onSubmit }: Props) {
-	const [data, setData] = useState<TTrackerInput>(initialValues)
+export default function TimetrackerForm({
+	start,
+	onSubmit,
+	categories
+}: Props) {
+	const [formValues, setFormValues] = useState<TTrackerInput>(initialValues)
+
+	useEffect(() => {
+		handleInputChange('start', start)
+		handleInputChange('category', categories[0].id)
+	}, [start, categories])
 
 	const handleInputChange = (
 		key: keyof TTrackerInput,
 		value: string | Date | number
 	) => {
-		setData((d) => ({ ...d, [key]: value }))
+		setFormValues((d) => ({ ...d, [key]: value }))
 	}
-
-	useEffect(() => {
-		handleInputChange('start', start)
-	}, [])
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault()
 		const finalData = {
-			...data,
+			...formValues,
 			end: new Date().getTime()
 		}
-		onSubmit(data)
+		onSubmit(finalData)
 	}
 
 	return (
 		<form onSubmit={handleSubmit}>
 			<div>
-				<input
-					type='time'
-					id='start'
-					name='start'
-					value={data.start}
-					onChange={({ target }) => {
-						return
-						handleInputChange('start', target.value)
-					}}
-					hidden
-				/>
-			</div>
-			<div>
 				<label htmlFor='category'>Category</label>
-				<input
-					type='text'
-					id='category'
+				<select
 					name='category'
-					value={data.category}
+					id='category'
+					value={formValues.category}
 					onChange={({ target }) =>
 						handleInputChange('category', target.value)
 					}
-				/>
+				>
+					{categories?.length &&
+						categories.map((c) => (
+							<option key={c.id} value={c.id}>
+								{c.abbreviation}
+							</option>
+						))}
+				</select>
 			</div>
 			<div>
 				<label htmlFor='info'>Info</label>
@@ -69,7 +69,7 @@ export default function TimetrackerForm({ start, onSubmit }: Props) {
 					type='text'
 					id='info'
 					name='info'
-					value={data.info}
+					value={formValues.info}
 					onChange={({ target }) =>
 						handleInputChange('info', target.value)
 					}
