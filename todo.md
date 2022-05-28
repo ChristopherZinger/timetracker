@@ -1,3 +1,11 @@
+# MVP
+
+-   Timetracker ListComponent
+-   Timetracker FormComponent
+-   Timetracker Page
+-   Timetrcker CRUD
+-   Analysis Page
+
 # Technical Debt
 
 -   can we use dependency injection to inject firebaseApp to domain classes
