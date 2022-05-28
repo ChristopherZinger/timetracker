@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useContext, useEffect, useState } from "react";
 import useGetActiveCategories from "../components/apiHooks/getActiveCategories";
 import useGetTodaysTrackers from "../components/apiHooks/getTodaysTrackers";
 import LoadingBox from "../components/common/LoadingBox";
@@ -8,14 +8,20 @@ import { useTick } from "../components/hooks/Tick";
 import TimetrackerList from "../components/timer/TimetrackerList";
 import TimetrackerForm from "../components/timer/TimetrackerForm";
 import { UserContext, UserProvider } from "../components/UserContext";
-import { TTracker, TTrackerInput } from "../types/domains/Timetracker";
+import {
+  TTracker,
+  TTrackerInput,
+  Timetracker,
+} from "../types/domains/Timetracker";
 import { TimeUtils } from "../types/utils/time";
 import { maxBy } from "lodash";
+import { AppError } from "../utils/appError";
 
-export default function Timetracker() {
+export default function TimetrackerPage() {
   const [trackers, setTrackers] = useState<undefined | TTracker[]>(undefined);
   const [now, setNow] = useState<number>(new Date().getTime());
   const [start, setStart] = useState<number | undefined>(undefined);
+  const { user } = useContext(UserContext);
   const tick = useTick();
   const { data: categories, isLoading: isLoadingCategories } =
     useGetActiveCategories();
@@ -23,15 +29,14 @@ export default function Timetracker() {
     useGetTodaysTrackers();
 
   useEffect(() => {
-    if (!todaysTrackers) {
-      return;
-    }
-    if (todaysTrackers.length) {
-      setTrackers(todaysTrackers);
-      setStart(maxBy(todaysTrackers, "end")?.end);
-    } else {
-      setTrackers([]);
-      setStart(new Date().getTime());
+    if (todaysTrackers) {
+      if (todaysTrackers.length) {
+        setTrackers(todaysTrackers);
+        setStart(maxBy(todaysTrackers, "end")?.end);
+      } else {
+        setTrackers([]);
+        setStart(new Date().getTime());
+      }
     }
   }, [todaysTrackers]);
 
@@ -43,11 +48,14 @@ export default function Timetracker() {
     setStart(new Date().getTime());
   };
 
-  const onSubmitNewItem = (item: TTrackerInput) => {
-    const id = Math.floor(Math.random() * 1000).toString();
-    const tracker = { id, ...item };
-    const list = [...(trackers || []), tracker];
+  const onSubmitNewItem = async (item: TTrackerInput) => {
+    if (!user) {
+      throw new AppError("user_required_to_create_tracker");
+    }
+    const timetracker = new Timetracker(user.uid);
+    const tracker = await timetracker.create(item);
     setStart(item.end);
+    const list = [...(trackers || []), tracker];
     setTrackers(list);
   };
 
@@ -59,9 +67,9 @@ export default function Timetracker() {
     <div>
       <Nav />
       <section>
-        {trackers?.length && categories && (
+        {trackers?.length && categories ? (
           <TimetrackerList list={trackers} categories={categories} />
-        )}
+        ) : null}
       </section>
 
       <section>
@@ -83,7 +91,7 @@ export default function Timetracker() {
   );
 }
 
-Timetracker.getLayout = function getLayout(page: ReactElement) {
+TimetrackerPage.getLayout = function getLayout(page: ReactElement) {
   const { push } = useRouter();
   return (
     <UserProvider>

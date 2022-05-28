@@ -5,7 +5,6 @@ export function useTick() {
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			console.log('tick')
 			setTick(new Date().getTime())
 		}, 1000)
 		return () => clearInterval(interval)

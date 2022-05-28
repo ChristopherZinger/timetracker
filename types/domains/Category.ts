@@ -20,6 +20,7 @@ export class Category {
     this.collection = collection(firestore, `${Collections.user}/${userId}/${Collections.category}`)
       .withConverter(getGenericConverter<TCategory>())
   }
+
   public async create (data: TCategoryInput) {
     const { id } = doc(this.collection)
     await setDoc(doc(this.collection, id), {

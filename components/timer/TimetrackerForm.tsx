@@ -73,7 +73,7 @@ export default function TimetrackerForm({
 					id='category'
 					value={formValues.categoryId}
 					onChange={({ target }) =>
-						handleInputChange('category', target.value)
+						handleInputChange('categoryId', target.value)
 					}
 				>
 					{categories?.length &&
