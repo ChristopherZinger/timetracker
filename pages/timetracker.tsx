@@ -8,6 +8,7 @@ import TimetrackerList from "../components/timer/TimetrackerList";
 import TimetrackerForm from "../components/TimetrackerForm";
 import { UserContext, UserProvider } from "../components/UserContext";
 import { TTracker, TTrackerInput } from "../types/domains/Timetracker";
+import { TimeUtils } from "../types/utils/time";
 
 export default function Timetracker() {
   const [trackers, setTrackers] = useState<TTracker[]>([]);
@@ -45,7 +46,8 @@ export default function Timetracker() {
         ) : (
           <div>
             <button onClick={handleStartDay}>Start Day</button>
-            <span>at: </span> <span>{formatTime(now)}</span>
+            <span>at: </span>{" "}
+            <span>{TimeUtils.timestampToHourMinute(now)}</span>
           </div>
         )}
       </section>
