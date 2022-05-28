@@ -6,14 +6,14 @@ const categories: TCategory[] = [
   {
     abbreviation: 'FT',
     name: 'Free Time',
-    id: Math.floor(Math.random() * 1000).toString(),
+    id: '2',
     isActive: true
   }
   ,
   {
     abbreviation: 'CR',
     name: 'Core Responsibility',
-    id: Math.floor(Math.random() * 1000).toString(),
+    id: '1',
     isActive: true
   }
 ]

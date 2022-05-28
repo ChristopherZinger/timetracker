@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect, useState } from "react";
 import useGetActiveCategories from "../components/apiHooks/getActiveCategories";
+import useGetTodaysTrackers from "../components/apiHooks/getTodaysTrackers";
 import LoadingBox from "../components/LoadingBox";
 import Nav from "../components/Nav";
 import { useTick } from "../components/timer/Tick";
@@ -17,6 +18,13 @@ export default function Timetracker() {
   const [start, setStart] = useState<number | undefined>(undefined);
   const tick = useTick();
   const { data: categories } = useGetActiveCategories();
+  const { data: todaysTrackers } = useGetTodaysTrackers();
+
+  useEffect(() => {
+    if (todaysTrackers) {
+      setTrackers(todaysTrackers);
+    }
+  }, todaysTrackers);
 
   useEffect(() => {
     setNow(tick);
@@ -38,7 +46,9 @@ export default function Timetracker() {
     <div>
       <Nav />
       <section>
-        <TimetrackerList list={trackers} categories={categories} />
+        {trackers?.length && categories && (
+          <TimetrackerList list={trackers} categories={categories} />
+        )}
       </section>
 
       <section>
