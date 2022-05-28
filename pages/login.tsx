@@ -1,9 +1,9 @@
 import { FormEvent, ReactElement, useState } from "react";
-import Nav from "../components/Nav";
+import Nav from "../components/common/Nav";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { UserContext, UserProvider } from "../components/UserContext";
 import { useRouter } from "next/router";
-import LoadingBox from "../components/LoadingBox";
+import LoadingBox from "../components/common/LoadingBox";
 
 export default function Login() {
   const [password, setPassword] = useState("");

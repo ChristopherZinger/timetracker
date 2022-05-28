@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Category, TCategory } from '../../types/domains/Category'
-import LoadingBox from '../LoadingBox'
+import LoadingBox from '../common/LoadingBox'
 import CategoryForm from './CategoryForm'
 
 type Props = {

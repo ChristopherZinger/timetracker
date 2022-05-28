@@ -1,7 +1,7 @@
 import { getAuth, signOut } from 'firebase/auth'
 import Link from 'next/link'
 import { useContext } from 'react'
-import { UserContext } from './UserContext'
+import { UserContext } from '../UserContext'
 
 const Nav = () => {
 	const { user } = useContext(UserContext)

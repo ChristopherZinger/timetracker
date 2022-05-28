@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import { ReactElement, useContext } from "react";
 import CategoryForm from "../components/categories/CategoryForm";
 import CategoryList from "../components/categories/CategoryList";
-import LoadingBox from "../components/LoadingBox";
-import Nav from "../components/Nav";
+import LoadingBox from "../components/common/LoadingBox";
+import Nav from "../components/common/Nav";
 import { UserContext, UserProvider } from "../components/UserContext";
 import { Category } from "../types/domains/Category";
 
