@@ -1,6 +1,5 @@
-import { getAuth, signOut } from "firebase/auth";
 import { ReactElement } from "react";
-import Nav from "../components/Nav";
+import Nav from "../components/common/Nav";
 import { UserProvider } from "../components/UserContext";
 
 export default function Home() {
