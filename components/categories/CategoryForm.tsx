@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
-import { TCategoryInput } from '../types/domains/Category'
+import { TCategoryInput } from '../../types/domains/Category'
 
 type Props = {
 	userId: string

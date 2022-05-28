@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Category, TCategory } from '../types/domains/Category'
-import LoadingBox from './LoadingBox'
-import CategoryForm from '../components/CategoryForm'
+import { Category, TCategory } from '../../types/domains/Category'
+import LoadingBox from '../LoadingBox'
+import CategoryForm from './CategoryForm'
 
 type Props = {
 	userId: string

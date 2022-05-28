@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect, useState } from "react";
 import useGetActiveCategories from "../components/apiHooks/getActiveCategories";
