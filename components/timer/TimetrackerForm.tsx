@@ -1,8 +1,8 @@
 import { FormEvent, useEffect, useState } from 'react'
-import { TCategory } from '../types/domains/Category'
-import { TTrackerInput } from '../types/domains/Timetracker'
-import { TimeUtils } from '../types/utils/time'
-import { useTick } from './timer/Tick'
+import { TCategory } from '../../types/domains/Category'
+import { TTrackerInput } from '../../types/domains/Timetracker'
+import { TimeUtils } from '../../types/utils/time'
+import { useTick } from './Tick'
 
 type Props = {
 	start: number
