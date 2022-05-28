@@ -1,6 +1,6 @@
 
 export enum Collections {
   category = 'category',
-  activityRecord = 'activity_record',
+  trackers = 'trackers',
   user = 'user',
 }

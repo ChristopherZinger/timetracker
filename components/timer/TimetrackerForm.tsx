@@ -18,7 +18,7 @@ export default function TimetrackerForm({
 	const initialValues: TTrackerInput = {
 		start,
 		end: new Date().getTime(),
-		category: categories[0].id,
+		categoryId: categories[0].id,
 		info: ''
 	}
 	const [formValues, setFormValues] = useState<TTrackerInput>(initialValues)
@@ -71,7 +71,7 @@ export default function TimetrackerForm({
 				<select
 					name='category'
 					id='category'
-					value={formValues.category}
+					value={formValues.categoryId}
 					onChange={({ target }) =>
 						handleInputChange('category', target.value)
 					}

@@ -15,7 +15,7 @@ export default function TimetrackerListItem({ item, categories }: Props) {
 			<span>{formatTime(item.start)}</span> -
 			<span>{formatTime(item.end)}</span>|{' '}
 			<span>
-				{categories.find((c) => c.id === item.category)?.abbreviation}
+				{categories.find((c) => c.id === item.categoryId)?.abbreviation}
 			</span>{' '}
 			| <span>{item.info}</span>
 		</div>
