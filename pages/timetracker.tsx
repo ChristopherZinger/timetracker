@@ -20,22 +20,29 @@ import { AppError } from "../utils/appError";
 export default function TimetrackerPage() {
   const [trackers, setTrackers] = useState<undefined | TTracker[]>(undefined);
   const [now, setNow] = useState<number>(new Date().getTime());
-  const [start, setStart] = useState<number | undefined>(undefined);
+  const [nextTrackerStartTime, setNextTrackerStartTime] = useState<
+    number | undefined
+  >(undefined);
   const { user } = useContext(UserContext);
   const tick = useTick();
-  const { data: categories, isLoading: isLoadingCategories } =
-    useGetActiveCategories();
-  const { data: todaysTrackers, isLoading: isLoadingTrackers } =
-    useGetTodaysTrackers();
+  const {
+    data: categories,
+    isLoading: isLoadingCategories,
+    error: categoriesError,
+  } = useGetActiveCategories();
+  const {
+    data: todaysTrackers,
+    isLoading: isLoadingTrackers,
+    error: trackersError,
+  } = useGetTodaysTrackers();
 
   useEffect(() => {
     if (todaysTrackers) {
       if (todaysTrackers.length) {
         setTrackers(todaysTrackers);
-        setStart(maxBy(todaysTrackers, "end")?.end);
+        setItemStart(maxBy(todaysTrackers, "end")?.end);
       } else {
         setTrackers([]);
-        setStart(new Date().getTime());
       }
     }
   }, [todaysTrackers]);
@@ -44,8 +51,8 @@ export default function TimetrackerPage() {
     setNow(tick);
   }, [tick]);
 
-  const handleStartDay = () => {
-    setStart(new Date().getTime());
+  const setItemStart = (timestamp?: number) => {
+    setNextTrackerStartTime(timestamp || new Date().getTime());
   };
 
   const onSubmitNewItem = async (item: TTrackerInput) => {
@@ -54,13 +61,21 @@ export default function TimetrackerPage() {
     }
     const timetracker = new Timetracker(user.uid);
     const tracker = await timetracker.create(item);
-    setStart(item.end);
+    setItemStart(item.end);
     const list = [...(trackers || []), tracker];
     setTrackers(list);
   };
 
   if (isLoadingCategories || isLoadingTrackers) {
     return <div>loading data</div>;
+  }
+
+  if (trackersError) {
+    return <div>Could not load trackers for today.</div>;
+  }
+
+  if (categoriesError) {
+    return <div>Could not load categories.</div>;
   }
 
   return (
@@ -73,15 +88,15 @@ export default function TimetrackerPage() {
       </section>
 
       <section>
-        {start && categories && trackers ? (
+        {nextTrackerStartTime && categories ? (
           <TimetrackerForm
-            start={start}
+            start={nextTrackerStartTime}
             onSubmit={onSubmitNewItem}
             categories={categories}
           />
         ) : (
           <div>
-            <button onClick={handleStartDay}>Start Day</button>
+            <button onClick={() => setItemStart()}>Start Day</button>
             <span>at: </span>{" "}
             <span>{TimeUtils.timestampToHourMinute(now)}</span>
           </div>
