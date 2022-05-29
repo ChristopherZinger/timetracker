@@ -9,15 +9,16 @@ export default function useGetActiveCategories () {
   const [error, setError] = useState<undefined | Error>(undefined)
   const { user } = useContext(UserContext)
 
-  const getCategories = async () => {
-    if (!user) {
-      throw new AppError('user_required_to_query_categories')
-    }
-    const category = new Category(user?.uid)
-    return await category.getAllActive()
-  }
 
   useEffect(() => {
+    const getCategories = async () => {
+      if (!user) {
+        throw new AppError('user_required_to_query_categories')
+      }
+      const category = new Category(user?.uid)
+      return await category.getAllActive()
+    }
+
     setIsLoading(true)
     getCategories().then(categories => {
       setCategories(categories)

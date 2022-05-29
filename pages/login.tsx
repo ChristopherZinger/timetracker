@@ -8,13 +8,13 @@ import LoadingBox from "../components/common/LoadingBox";
 export default function Login() {
   const { push } = useRouter();
   const { user } = useContext(UserContext);
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+
   if (user !== null) {
     push("/timetracker");
     return;
   }
-
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
