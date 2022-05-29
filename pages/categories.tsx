@@ -1,41 +1,36 @@
 import { useRouter } from "next/router";
 import { ReactElement, useContext } from "react";
-import CategoryForm from "../components/categories/CategoryForm";
-import CategoryList from "../components/categories/CategoryList";
+import Categories from "../components/categories/Categories";
 import LoadingBox from "../components/common/LoadingBox";
 import Nav from "../components/common/Nav";
 import { UserContext, UserProvider } from "../components/UserContext";
-import { Category } from "../types/domains/Category";
+import { AppError } from "../utils/appError";
 
-export default function Categories() {
+export default function CategoriesPage() {
   const { user } = useContext(UserContext);
-  return (
-    user && (
-      <>
-        <Nav />
-        <CategoryForm
-          userId={user.uid}
-          onSubmit={async (userId, data) => {
-            const category = new Category(userId);
-            // todo make sure data has all fields
-            await category.create(data);
-          }}
-        />
-        <CategoryList userId={user.uid} />
-      </>
-    )
-  );
+  const { push } = useRouter();
+  if (user === null) {
+    push("/");
+    return;
+  }
+
+  if (user === undefined) {
+    throw new AppError("user_can_not_be_loading_at_this_point");
+  }
+
+  return <Categories user={user} />;
 }
 
-Categories.getLayout = function getLayout(page: ReactElement) {
-  const { push } = useRouter();
+CategoriesPage.getLayout = function getLayout(page: ReactElement) {
   return (
     <UserProvider>
       <UserContext.Consumer>
-        {({ user }) => {
-          user === null && push("/");
-          return user ? <>{page}</> : <LoadingBox />;
-        }}
+        {({ user }) => (
+          <>
+            <Nav />
+            {user === undefined ? <LoadingBox /> : <>{page}</>}
+          </>
+        )}
       </UserContext.Consumer>
     </UserProvider>
   );
