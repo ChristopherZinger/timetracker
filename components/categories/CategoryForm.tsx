@@ -2,15 +2,11 @@ import { FormEvent, useEffect, useState } from 'react'
 import { TCategoryInput } from '../../types/domains/Category'
 
 type Props = {
-	userId: string
-	onSubmit: (userId: string, data: TCategoryInput) => Promise<void>
+	onSubmit: (data: TCategoryInput) => Promise<void>
 	initialValues?: Partial<TCategoryInput>
 }
-export default function CategoryForm({
-	userId,
-	onSubmit,
-	initialValues = {}
-}: Props) {
+
+export default function CategoryForm({ onSubmit, initialValues = {} }: Props) {
 	const [data, setData] = useState<TCategoryInput>({
 		abbreviation: '',
 		name: ''
@@ -18,7 +14,7 @@ export default function CategoryForm({
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault()
-		await onSubmit(userId, data)
+		await onSubmit(data)
 	}
 
 	useEffect(() => {
@@ -54,7 +50,7 @@ export default function CategoryForm({
 					}
 				/>
 			</div>
-			<button type='submit'>Create Category</button>
+			<button type='submit'>Submit</button>
 		</form>
 	)
 }

@@ -1,27 +1,21 @@
 import { useState } from 'react'
-import { Category, TCategory } from '../../types/domains/Category'
-import LoadingBox from '../common/LoadingBox'
+import { TCategory, TCategoryInput } from '../../types/domains/Category'
 import CategoryForm from './CategoryForm'
 
 type Props = {
-	userId: string
+	categories: TCategory[]
+	onUpdateCategory: (
+		data: { id: string } & Partial<TCategoryInput>
+	) => Promise<void>
 }
 
 export default function CategoryList(props: Props) {
-	const { userId } = props
-	const category = new Category(userId)
-	const [categories, setCategories] = useState<undefined | TCategory[]>(
-		undefined
-	)
+	const { categories, onUpdateCategory } = props
 	const [selectedCategory, setSelectedCategory] = useState<
 		undefined | string
 	>(undefined)
 
-	category.getAllActive().then((r) => {
-		setCategories(r)
-	})
-
-	return categories ? (
+	return (
 		<>
 			{categories.map((c) => (
 				<div key={c.id}>
@@ -36,9 +30,12 @@ export default function CategoryList(props: Props) {
 								exit edit mode
 							</button>
 							<CategoryForm
-								userId={userId}
-								onSubmit={async (_, data) => {
-									await category.update(c.id, data)
+								onSubmit={async (data) => {
+									await onUpdateCategory({
+										id: c.id,
+										...data
+									})
+									setSelectedCategory(undefined)
 								}}
 								initialValues={c}
 							/>
@@ -47,7 +44,5 @@ export default function CategoryList(props: Props) {
 				</div>
 			))}
 		</>
-	) : (
-		<LoadingBox />
 	)
 }
