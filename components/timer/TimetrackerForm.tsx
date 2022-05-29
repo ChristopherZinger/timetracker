@@ -44,72 +44,79 @@ export default function TimetrackerForm({
 
 	return (
 		<form onSubmit={handleSubmit}>
-			{hideStartInput ? null : (
-				<div>
+			<div className='flex px-6 py-4 gap-x-8 border'>
+				{hideStartInput ? null : (
+					<div className='flex-1'>
+						<input
+							type='time'
+							name='start'
+							id='start'
+							value={TimeUtils.timestampToHourMinute(
+								formValues.start
+							)}
+							onChange={({ target }) => {
+								const [hours, minutes] = target.value.split(':')
+								const date = new Date()
+								date.setHours(parseInt(hours)) // todo validate hours before
+								date.setMinutes(parseInt(minutes))
+								handleInputChange('start', date.getTime())
+							}}
+						/>
+					</div>
+				)}
+				<div className='flex-none'>
 					<input
 						type='time'
-						name='start'
-						id='start'
-						value={TimeUtils.timestampToHourMinute(
-							formValues.start
-						)}
+						name='end'
+						id='end'
+						value={TimeUtils.timestampToHourMinute(formValues.end)}
 						onChange={({ target }) => {
+							stopTick()
 							const [hours, minutes] = target.value.split(':')
 							const date = new Date()
 							date.setHours(parseInt(hours)) // todo validate hours before
 							date.setMinutes(parseInt(minutes))
-							handleInputChange('start', date.getTime())
+							handleInputChange('end', date.getTime())
 						}}
 					/>
 				</div>
-			)}
-			<div>
-				<input
-					type='time'
-					name='end'
-					id='end'
-					value={TimeUtils.timestampToHourMinute(formValues.end)}
-					onChange={({ target }) => {
-						stopTick()
-						const [hours, minutes] = target.value.split(':')
-						const date = new Date()
-						date.setHours(parseInt(hours)) // todo validate hours before
-						date.setMinutes(parseInt(minutes))
-						handleInputChange('end', date.getTime())
-					}}
-				/>
+				<div className='flex-none'>
+					<select
+						name='category'
+						id='category'
+						value={formValues.categoryId}
+						onChange={({ target }) =>
+							handleInputChange('categoryId', target.value)
+						}
+					>
+						{categories?.length &&
+							categories.map((c) => (
+								<option key={c.id} value={c.id}>
+									{c.abbreviation}
+								</option>
+							))}
+					</select>
+				</div>
+				<div className='flex-1'>
+					<input
+						className='w-full'
+						type='text'
+						id='info'
+						name='info'
+						placeholder='Put some info here'
+						value={formValues.info}
+						onChange={({ target }) =>
+							handleInputChange('info', target.value)
+						}
+					/>
+				</div>
+
+				<div className='flex-none'>
+					<button type='submit'>
+						<span className='font-bold'>Submit</span>
+					</button>
+				</div>
 			</div>
-			<div>
-				<label htmlFor='category'>Category</label>
-				<select
-					name='category'
-					id='category'
-					value={formValues.categoryId}
-					onChange={({ target }) =>
-						handleInputChange('categoryId', target.value)
-					}
-				>
-					{categories?.length &&
-						categories.map((c) => (
-							<option key={c.id} value={c.id}>
-								{c.abbreviation}
-							</option>
-						))}
-				</select>
-			</div>
-			<div>
-				<label htmlFor='info'>Info</label>
-				<input
-					type='text'
-					id='info'
-					name='info'
-					value={formValues.info}
-					onChange={({ target }) =>
-						handleInputChange('info', target.value)
-					}
-				/>
-			</div>
-			<button type='submit'>Submit</button>
 		</form>
 	)
 }

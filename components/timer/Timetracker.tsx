@@ -83,19 +83,21 @@ export default function TimetrackerPage({ user }: Props) {
 	}
 
 	return (
-		<div>
-			<section>
-				{trackers?.length && categories ? (
-					<TimetrackerList
-						list={trackers}
-						categories={categories}
-						onUpdateTracker={onUpdateTracker}
-					/>
-				) : null}
+		<div className='w-9/12 mx-auto mb-20 mt-10 px-10 gap-y-8 flex flex-col flex-1 '>
+			<section className='relative flex-1'>
+				<div className='absolute h-full overflow-auto w-full'>
+					{trackers?.length && categories ? (
+						<TimetrackerList
+							list={trackers}
+							categories={categories}
+							onUpdateTracker={onUpdateTracker}
+						/>
+					) : null}
+				</div>
 			</section>
-			<hr />
-			<section>
-				{nextTrackerStartTime && categories?.length ? (
+
+			{nextTrackerStartTime && categories?.length ? (
+				<section className='flex-none'>
 					<TimetrackerForm
 						shouldSetEndToNow={true}
 						onSubmit={onSubmitNewTracker}
@@ -107,16 +109,18 @@ export default function TimetrackerPage({ user }: Props) {
 							info: ''
 						}}
 					/>
-				) : (
+				</section>
+			) : (
+				<section>
 					<div>
 						<button onClick={() => setItemStart()}>
-							Start Day
+							<span className='font-bold'>Start Day</span>
 						</button>
 						<span>at: </span>{' '}
 						<span>{TimeUtils.timestampToHourMinute(now)}</span>
 					</div>
-				)}
-			</section>
+				</section>
+			)}
 		</div>
 	)
 }

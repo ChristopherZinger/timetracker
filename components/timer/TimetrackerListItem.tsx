@@ -24,18 +24,10 @@ export default function TimetrackerListItem({
 	}
 
 	return (
-		<div>
-			<span>{formatTime(item.start)}</span> -
-			<span>{formatTime(item.end)}</span>|{' '}
-			<span>
-				{categories.find((c) => c.id === item.categoryId)?.abbreviation}
-			</span>{' '}
-			| <span>{item.info}</span>
-			<button onClick={() => setEditMode((f) => !f)}>
-				{editMode ? 'close' : 'edit'}
-			</button>
+		<div className='mx-6'>
 			{editMode ? (
 				<div>
+					<button onClick={() => setEditMode(false)}>close</button>
 					<TimetrackerForm
 						onSubmit={editItem}
 						categories={categories}
@@ -43,7 +35,23 @@ export default function TimetrackerListItem({
 						hideStartInput={false}
 					/>
 				</div>
-			) : null}
+			) : (
+				<div className='flex gap-x-8 py-4'>
+					<span className='flex-none'>
+						{formatTime(item.start)}
+						{' - '}
+						{formatTime(item.end)}
+					</span>
+					<span className='flex-none'>
+						{
+							categories.find((c) => c.id === item.categoryId)
+								?.abbreviation
+						}
+					</span>
+					<span className='flex-1'>{item.info}</span>
+					<button onClick={() => setEditMode(true)}>edit</button>
+				</div>
+			)}
 		</div>
 	)
 }
