@@ -3,7 +3,7 @@ import { getAuth, User } from 'firebase/auth'
 import { onAuthStateChanged } from 'firebase/auth'
 import { useRouter } from 'next/router'
 
-type UserStatus = User | undefined | null
+type UserStatus = User | undefined | null // undefined = loading user
 
 const UserContext = createContext<{
 	user: UserStatus
@@ -11,7 +11,7 @@ const UserContext = createContext<{
 }>({
 	user: undefined,
 	setUser: (user) => {}
-}) // undefined means it is loading
+})
 type Props = {
 	children: React.ReactNode
 }
