@@ -81,18 +81,25 @@ export default function TimetrackerPage() {
   return (
     <div>
       <Nav />
+      <hr />
       <section>
         {trackers?.length && categories ? (
           <TimetrackerList list={trackers} categories={categories} />
         ) : null}
       </section>
-
+      <hr />
       <section>
-        {nextTrackerStartTime && categories ? (
+        {nextTrackerStartTime && categories?.length ? (
           <TimetrackerForm
-            start={nextTrackerStartTime}
+            shouldSetEndToNow={true}
             onSubmit={onSubmitNewItem}
             categories={categories}
+            initialValues={{
+              start: nextTrackerStartTime,
+              categoryId: categories[0].id,
+              end: new Date().getTime(),
+              info: "",
+            }}
           />
         ) : (
           <div>

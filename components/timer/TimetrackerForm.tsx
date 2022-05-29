@@ -5,31 +5,23 @@ import { TimeUtils } from '../../types/utils/time'
 import { useTick } from '../hooks/Tick'
 
 type Props = {
-	start: number
+	initialValues: TTrackerInput
 	onSubmit: (data: TTrackerInput) => void
 	categories: TCategory[]
+	shouldSetEndToNow?: boolean
 }
 
 export default function TimetrackerForm({
-	start,
+	initialValues,
 	onSubmit,
-	categories
+	categories,
+	shouldSetEndToNow = false
 }: Props) {
-	const initialValues: TTrackerInput = {
-		start,
-		end: new Date().getTime(),
-		categoryId: categories[0].id,
-		info: ''
-	}
 	const [formValues, setFormValues] = useState<TTrackerInput>(initialValues)
-	const [shouldTickRun, setShouldTickRun] = useState(true)
+	const [shouldTickRun, setShouldTickRun] = useState(shouldSetEndToNow)
 	const stopTick = () => setShouldTickRun(false)
 	const startTick = () => setShouldTickRun(true)
 	const tick = useTick()
-
-	useEffect(() => {
-		handleInputChange('start', start)
-	}, [start])
 
 	useEffect(() => {
 		shouldTickRun && handleInputChange('end', new Date().getTime())
