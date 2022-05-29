@@ -7,7 +7,8 @@ import {
   query,
   setDoc,
   where,
-  orderBy
+  orderBy,
+  updateDoc
 } from 'firebase/firestore'
 import { Collections } from './utils/collections'
 import { getGenericConverter } from './utils/genericConverger'
@@ -40,6 +41,12 @@ export class Timetracker {
       ...data
     })
     return { ...data, id }
+  }
+
+  public async update (data: TTracker): Promise<TTracker> {
+    const { id, ...newData } = data // newData doesn't override doc's id.
+    await updateDoc(doc(this.collection, data.id), newData)
+    return data
   }
 
   public async getTodaysTrackers (): Promise<TTracker[]> {
