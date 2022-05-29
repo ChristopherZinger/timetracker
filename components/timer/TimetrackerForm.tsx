@@ -109,7 +109,7 @@ export default function TimetrackerForm({
 					}
 				/>
 			</div>
-			<button type='submit'>go!</button>
+			<button type='submit'>Submit</button>
 		</form>
 	)
 }

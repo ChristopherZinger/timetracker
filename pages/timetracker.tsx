@@ -55,14 +55,26 @@ export default function TimetrackerPage() {
     setNextTrackerStartTime(timestamp || new Date().getTime());
   };
 
-  const onSubmitNewItem = async (item: TTrackerInput) => {
+  const onUpdateTracker = async (tracker: TTracker) => {
+    if (!user) {
+      throw new AppError("user_required_to_edit_tracker");
+    }
+    const timetracker = new Timetracker(user.uid);
+    const updatedTracker = await timetracker.update(tracker);
+    const newList = trackers?.map((t) =>
+      t.id === updatedTracker.id ? updatedTracker : t
+    );
+    setTrackers(newList);
+  };
+
+  const onSubmitNewTracker = async (tracker: TTrackerInput) => {
     if (!user) {
       throw new AppError("user_required_to_create_tracker");
     }
     const timetracker = new Timetracker(user.uid);
-    const tracker = await timetracker.create(item);
-    setItemStart(item.end);
-    const list = [...(trackers || []), tracker];
+    const newTracker = await timetracker.create(tracker);
+    setItemStart(newTracker.end);
+    const list = [...(trackers || []), newTracker];
     setTrackers(list);
   };
 
@@ -84,7 +96,11 @@ export default function TimetrackerPage() {
       <hr />
       <section>
         {trackers?.length && categories ? (
-          <TimetrackerList list={trackers} categories={categories} />
+          <TimetrackerList
+            list={trackers}
+            categories={categories}
+            onUpdateTracker={onUpdateTracker}
+          />
         ) : null}
       </section>
       <hr />
@@ -92,7 +108,7 @@ export default function TimetrackerPage() {
         {nextTrackerStartTime && categories?.length ? (
           <TimetrackerForm
             shouldSetEndToNow={true}
-            onSubmit={onSubmitNewItem}
+            onSubmit={onSubmitNewTracker}
             categories={categories}
             initialValues={{
               start: nextTrackerStartTime,

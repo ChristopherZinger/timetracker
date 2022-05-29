@@ -5,9 +5,14 @@ import TimetrackerListItem from './TimetrackerListItem'
 type Props = {
 	list: TTracker[]
 	categories: TCategory[]
+	onUpdateTracker: (tracker: TTracker) => Promise<void>
 }
 
-export default function TimetrackerList({ list, categories }: Props) {
+export default function TimetrackerList({
+	list,
+	categories,
+	onUpdateTracker
+}: Props) {
 	return (
 		<>
 			{list.map((item) => (
@@ -15,6 +20,7 @@ export default function TimetrackerList({ list, categories }: Props) {
 					item={item}
 					key={item.id}
 					categories={categories}
+					onUpdateTracker={onUpdateTracker}
 				/>
 			))}
 		</>

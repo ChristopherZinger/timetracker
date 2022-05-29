@@ -1,31 +1,26 @@
 import { useContext, useState } from 'react'
 import type { TCategory } from '../../types/domains/Category'
-import {
-	Timetracker,
-	TTracker,
-	TTrackerInput
-} from '../../types/domains/Timetracker'
+import { TTracker, TTrackerInput } from '../../types/domains/Timetracker'
 import { TimeUtils } from '../../types/utils/time'
-import { AppError } from '../../utils/appError'
-import { UserContext } from '../UserContext'
 import TimetrackerForm from './TimetrackerForm'
 
 type Props = {
 	item: TTracker
 	categories: TCategory[]
+	onUpdateTracker: (tracker: TTracker) => Promise<void>
 }
 
-export default function TimetrackerListItem({ item, categories }: Props) {
+export default function TimetrackerListItem({
+	item,
+	categories,
+	onUpdateTracker
+}: Props) {
 	const formatTime = TimeUtils.timestampToHourMinute
 	const [editMode, setEditMode] = useState(false)
-	const { user } = useContext(UserContext)
 
 	const editItem = async (data: TTrackerInput) => {
-		if (!user) {
-			throw new AppError('user_required_to_edit_tracker')
-		}
-		const timetracker = new Timetracker(user.uid)
-		await timetracker.update({ id: item.id, ...data })
+		await onUpdateTracker({ id: item.id, ...data })
+		setEditMode(false)
 	}
 
 	return (
