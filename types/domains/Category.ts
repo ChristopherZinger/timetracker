@@ -23,11 +23,13 @@ export class Category {
 
   public async create (data: TCategoryInput) {
     const { id } = doc(this.collection)
-    await setDoc(doc(this.collection, id), {
+    const category = {
       id,
-      isActive: true,
       ...data,
-    })
+      isActive: true
+    }
+    await setDoc(doc(this.collection, id), category)
+    return category
   }
 
   public async update (id: string, data: Partial<TCategory>): Promise<void> {
