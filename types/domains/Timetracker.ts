@@ -30,7 +30,7 @@ export class Timetracker {
     const firestore = getFirestore()
     this.collection = collection(
       firestore,
-      `${Collections.user}/${userId}/${Collections.trackers}`
+      `${Collections.user}/${this.userId}/${Collections.trackers}`
     ).withConverter(getGenericConverter<TTracker>())
   }
 
