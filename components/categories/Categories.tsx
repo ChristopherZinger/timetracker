@@ -41,27 +41,33 @@ export default function Categories({ user }: Props) {
 		)
 	}
 	return (
-		<>
-			<CategoryForm
-				onSubmit={async (data) => {
-					const category = new Category(user.uid)
-					// todo make sure data has all fields
-					const newCategoryDoc = await category.create(data)
-					setCategories((categories) => [
-						...categories,
-						newCategoryDoc
-					])
-				}}
-			/>
+		<div className='w-9/12 mx-auto mb-20 mt-10 px-10 gap-y-8'>
+			<h1 className='text-xl mb-8'>Add Category:</h1>
+			<div className='mb-8'>
+				<CategoryForm
+					onSubmit={async (data) => {
+						const category = new Category(user.uid)
+						// todo make sure data has all fields
+						const newCategoryDoc = await category.create(data)
+						setCategories((categories) => [
+							...categories,
+							newCategoryDoc
+						])
+					}}
+				/>
+			</div>
+			<hr />
 
 			{isLoading ? (
 				<LoadingBox />
 			) : (
-				<CategoryList
-					categories={categories}
-					onUpdateCategory={onUpdateCategory}
-				/>
+				<div className='py-8'>
+					<CategoryList
+						categories={categories}
+						onUpdateCategory={onUpdateCategory}
+					/>
+				</div>
 			)}
-		</>
+		</div>
 	)
 }

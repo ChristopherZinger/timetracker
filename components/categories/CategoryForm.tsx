@@ -26,31 +26,40 @@ export default function CategoryForm({ onSubmit, initialValues = {} }: Props) {
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<div>
-				<label htmlFor='abbreviation'>Abbreviation</label>
-				<input
-					type='text'
-					id='abbreviation'
-					name='abbreviation'
-					value={data.abbreviation}
-					onChange={({ target }) =>
-						setData((d) => ({ ...d, abbreviation: target.value }))
-					}
-				/>
+			<div className='flex'>
+				<div className='flex-none'>
+					<label htmlFor='abbreviation'>Abbreviation: </label>
+					<input
+						type='text'
+						id='abbreviation'
+						name='abbreviation'
+						value={data.abbreviation}
+						placeholder='e.g. CR'
+						onChange={({ target }) =>
+							setData((d) => ({
+								...d,
+								abbreviation: target.value
+							}))
+						}
+					/>
+				</div>
+				<div className='flex-1'>
+					<label htmlFor='name'>Name: </label>
+					<input
+						type='text'
+						id='name'
+						name='name'
+						placeholder='e.g. Core Responsibility'
+						value={data.name}
+						onChange={({ target }) =>
+							setData((d) => ({ ...d, name: target.value }))
+						}
+					/>
+				</div>
+				<button type='submit'>
+					<span className='font-bold'>save</span>
+				</button>
 			</div>
-			<div>
-				<label htmlFor='name'>Name</label>
-				<input
-					type='text'
-					id='name'
-					name='name'
-					value={data.name}
-					onChange={({ target }) =>
-						setData((d) => ({ ...d, name: target.value }))
-					}
-				/>
-			</div>
-			<button type='submit'>Submit</button>
 		</form>
 	)
 }
