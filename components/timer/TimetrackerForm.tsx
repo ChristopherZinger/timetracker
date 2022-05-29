@@ -9,13 +9,15 @@ type Props = {
 	onSubmit: (data: TTrackerInput) => void
 	categories: TCategory[]
 	shouldSetEndToNow?: boolean
+	hideStartInput?: boolean
 }
 
 export default function TimetrackerForm({
 	initialValues,
 	onSubmit,
 	categories,
-	shouldSetEndToNow = false
+	shouldSetEndToNow = false,
+	hideStartInput = true
 }: Props) {
 	const [formValues, setFormValues] = useState<TTrackerInput>(initialValues)
 	const [shouldTickRun, setShouldTickRun] = useState(shouldSetEndToNow)
@@ -42,6 +44,25 @@ export default function TimetrackerForm({
 
 	return (
 		<form onSubmit={handleSubmit}>
+			{hideStartInput ? null : (
+				<div>
+					<input
+						type='time'
+						name='start'
+						id='start'
+						value={TimeUtils.timestampToHourMinute(
+							formValues.start
+						)}
+						onChange={({ target }) => {
+							const [hours, minutes] = target.value.split(':')
+							const date = new Date()
+							date.setHours(parseInt(hours)) // todo validate hours before
+							date.setMinutes(parseInt(minutes))
+							handleInputChange('start', date.getTime())
+						}}
+					/>
+				</div>
+			)}
 			<div>
 				<input
 					type='time'
