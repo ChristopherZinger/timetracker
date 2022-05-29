@@ -10,10 +10,10 @@ type Props = {
 export default function TimetrackerList({ list, categories }: Props) {
 	return (
 		<>
-			{list.map((item, i) => (
+			{list.map((item) => (
 				<TimetrackerListItem
 					item={item}
-					key={i}
+					key={item.id}
 					categories={categories}
 				/>
 			))}
