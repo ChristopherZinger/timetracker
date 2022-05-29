@@ -1,4 +1,4 @@
-import { FormEvent, ReactElement, useState } from "react";
+import { FormEvent, ReactElement, useContext, useState } from "react";
 import Nav from "../components/common/Nav";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { UserContext, UserProvider } from "../components/UserContext";
@@ -6,6 +6,13 @@ import { useRouter } from "next/router";
 import LoadingBox from "../components/common/LoadingBox";
 
 export default function Login() {
+  const { push } = useRouter();
+  const { user } = useContext(UserContext);
+  if (user !== null) {
+    push("/timetracker");
+    return;
+  }
+
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
@@ -49,13 +56,11 @@ export default function Login() {
 }
 
 Login.getLayout = function getLayout(page: ReactElement) {
-  const { push } = useRouter();
   return (
     <UserProvider>
       <UserContext.Consumer>
         {({ user }) => {
-          user !== null && push("/timetracker");
-          return !user ? <>{page}</> : <LoadingBox />;
+          return user === undefined ? <LoadingBox /> : <>{page}</>;
         }}
       </UserContext.Consumer>
     </UserProvider>
