@@ -53,7 +53,7 @@ export class Timetracker {
           this.collection,
           where('start', '>=', today.getTime()),
           where('start', '<', tomorrow.getTime()),
-          orderBy('start', 'desc')
+          orderBy('start', 'asc')
         )
       )
     ).docs.map((s) => s.data())
