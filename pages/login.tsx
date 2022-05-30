@@ -25,32 +25,38 @@ export default function Login() {
   return (
     <div>
       <Nav />
-      <h1>login</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            onChange={({ target }) => setEmail(target.value)}
-            value={email}
-          />
-        </div>
+      <div className="w-96 mx-auto shadow p-8 mt-20 rounded-md ">
+        <h1 className="text-xl mb-10">Login</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col border-b-2 border-black mb-10">
+            <label htmlFor="email">Email:</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              onChange={({ target }) => setEmail(target.value)}
+              value={email}
+            />
+          </div>
 
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            onChange={({ target }) => setPassword(target.value)}
-            value={password}
-          />
-        </div>
+          <div className="flex flex-col border-b-2 border-black">
+            <label htmlFor="password">Password:</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              onChange={({ target }) => setPassword(target.value)}
+              value={password}
+            />
+          </div>
 
-        <button type="submit">login</button>
-      </form>
+          <div className="flex flex-row-reverse mt-10">
+            <button type="submit" className="px-4 py-2 rounded shadow">
+              Login
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
