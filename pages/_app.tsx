@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import * as config from "../firebaseconfig.json";
+import "../utils/initFirebase";
 import { initializeApp } from "firebase/app";
 import type { ReactElement, ReactNode } from "react";
 import type { NextPage } from "next";
@@ -14,8 +14,6 @@ type AppPropsWithLayout = AppProps & {
 };
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  initializeApp(config);
-
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return getLayout(<Component {...pageProps} />);

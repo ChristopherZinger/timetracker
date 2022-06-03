@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { ReactElement, useContext } from "react";
 import LoadingBox from "../components/common/LoadingBox";
-import Nav from "../components/common/Nav";
 import { UserContext, UserProvider } from "../components/UserContext";
 
 export default function Home() {
