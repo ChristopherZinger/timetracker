@@ -9,16 +9,15 @@ export default function useGetActiveCategories () {
   const [error, setError] = useState<undefined | Error>(undefined)
   const { user } = useContext(UserContext)
 
-
-  useEffect(() => {
-    const getCategories = async () => {
-      if (!user) {
-        throw new AppError('user_required_to_query_categories')
-      }
-      const category = new Category(user?.uid)
-      return await category.getAllActive()
+  async function getCategories () {
+    if (!user) {
+      throw new AppError('user_required_to_query_categories')
     }
+    const category = new Category(user?.uid)
+    return await category.getAllActive()
+  }
 
+  function handleCall () {
     setIsLoading(true)
     getCategories().then(categories => {
       setCategories(categories)
@@ -27,7 +26,11 @@ export default function useGetActiveCategories () {
       setError(err)
       setIsLoading(false)
     })
+  }
+
+  useEffect(() => {
+    handleCall()
   }, [])
 
-  return { isLoading, data, error }
+  return { isLoading, data, error, reload: async () => await handleCall() }
 }

@@ -1,29 +1,42 @@
 import { useState } from 'react'
-import { TCategory, TCategoryInput } from '../../types/domains/Category'
+import {
+	Category,
+	TCategory,
+	TCategoryInput
+} from '../../types/domains/Category'
 import CategoryForm from './CategoryForm'
 
 type Props = {
+	userId: string
 	categories: TCategory[]
-	onUpdateCategory: (
-		data: { id: string } & Partial<TCategoryInput>
-	) => Promise<void>
+	reload: () => Promise<void>
 }
 
-export default function CategoryList(props: Props) {
-	const { categories, onUpdateCategory } = props
+export default function CategoryList({ reload, categories, userId }: Props) {
 	const [selectedCategory, setSelectedCategory] = useState<
 		undefined | string
 	>(undefined)
 
+	const category = new Category(userId)
+
+	async function onUpdateCategory(
+		data: { id: string } & Partial<TCategoryInput>
+	) {
+		await category.update(data.id, data)
+		await reload()
+	}
+
+	async function onDeactivateCategory(id: string) {
+		await category.deactivate(id)
+		await reload()
+	}
+
 	return (
-		<>
+		<div className='flex flex-col gap-y-6'>
 			{categories.map((c) => (
-				<div
-					key={c.id}
-					className={selectedCategory === c.id ? 'py-6' : ''}
-				>
+				<div key={c.id}>
 					{selectedCategory === c.id ? (
-						<div className='p-2 flex gap-x-8'>
+						<div className='px-4 py-6 flex gap-x-8 border'>
 							<div className='flex-1'>
 								<CategoryForm
 									onSubmit={async (data) => {
@@ -38,6 +51,12 @@ export default function CategoryList(props: Props) {
 							</div>
 							<button
 								className='font-bold'
+								onClick={() => onDeactivateCategory(c.id)}
+							>
+								remove
+							</button>
+							<button
+								className='font-bold'
 								onClick={() => setSelectedCategory(undefined)}
 							>
 								cancel
@@ -50,7 +69,7 @@ export default function CategoryList(props: Props) {
 					)}
 				</div>
 			))}
-		</>
+		</div>
 	)
 }
 

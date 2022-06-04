@@ -26,8 +26,8 @@ export default function CategoryForm({ onSubmit, initialValues = {} }: Props) {
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<div className='flex'>
-				<div className='flex-none'>
+			<div className='flex gap-x-10'>
+				<div className='flex-none flex gap-x-6'>
 					<label htmlFor='abbreviation'>Abbreviation: </label>
 					<input
 						type='text'
@@ -43,7 +43,7 @@ export default function CategoryForm({ onSubmit, initialValues = {} }: Props) {
 						}
 					/>
 				</div>
-				<div className='flex-1'>
+				<div className='flex-1 flex gap-x-6'>
 					<label htmlFor='name'>Name: </label>
 					<input
 						type='text'
