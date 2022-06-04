@@ -19,13 +19,15 @@ export default function useGetActiveCategories () {
 
   function handleCall () {
     setIsLoading(true)
-    getCategories().then(categories => {
-      setCategories(categories)
-      setIsLoading(false)
-    }).catch(err => {
-      setError(err)
-      setIsLoading(false)
-    })
+    getCategories()
+      .then((categories) => {
+        setCategories(categories)
+        setIsLoading(false)
+      })
+      .catch((err) => {
+        setError(err)
+        setIsLoading(false)
+      })
   }
 
   useEffect(() => {
