@@ -30,6 +30,7 @@ const Nav = () => {
 						</li>
 						<li>
 							<span
+								className='a'
 								onClick={() => {
 									signOut(getAuth())
 								}}

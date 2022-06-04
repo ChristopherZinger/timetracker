@@ -16,3 +16,26 @@ body {
 	display: flex;
 	flex-direction: column;
 }
+
+a,
+.a {
+	cursor: pointer;
+}
+
+a:hover,
+.a:hover {
+	text-decoration: underline;
+}
+
+input:focus {
+	outline: none;
+}
+
+input[type='text'] {
+	border-bottom: 2px solid lightgray;
+	font-weight: bold;
+}
+
+input[type='text']:focus {
+	border-bottom: 2px solid black;
+}
