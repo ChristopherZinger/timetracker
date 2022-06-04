@@ -3,6 +3,7 @@ import type { TCategory } from '../../types/domains/Category'
 import { TTracker } from '../../types/domains/Timetracker'
 import { TimeUtils } from '../../types/utils/time'
 import CategoryDot from '../categories/CategoryDot'
+import { InputErrorsMap } from '../../types/utils/validator'
 import TimetrackerForm from './TimetrackerForm'
 
 type Props = {
@@ -30,6 +31,7 @@ export default function TimetrackerListItem({
 						categories={categories}
 						initialValues={item}
 						hideStartInput={false}
+						errors={{}} //! Pass real errors here
 					/>
 				</div>
 			) : (
