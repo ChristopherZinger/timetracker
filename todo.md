@@ -1,6 +1,7 @@
 # MVP
 
 -   Analysis Page
+-   Mobile device styles
 
 # Technical Debt
 
