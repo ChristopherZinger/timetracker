@@ -1,15 +1,11 @@
 import type { User } from 'firebase/auth'
 import { maxBy } from 'lodash'
 import { useEffect, useState } from 'react'
-import {
-	TTracker,
-	Timetracker,
-	TTrackerInput
-} from '../../types/domains/Timetracker'
-import { TimeUtils } from '../../types/utils/time'
+import { Timetracker } from '../../types/domains/Timetracker'
 import useGetActiveCategories from '../apiHooks/getActiveCategories'
 import useGetTodaysTrackers from '../apiHooks/getTodaysTrackers'
-import { useTick } from '../hooks/Tick'
+import LoadingBox from '../common/LoadingBox'
+import StartDayBtn from './StartDayBtn'
 import TimetrackerForm from './TimetrackerForm'
 import TimetrackerList from './TimetrackerList'
 
@@ -18,12 +14,9 @@ type Props = {
 }
 
 export default function TimetrackerPage({ user }: Props) {
-	const [trackers, setTrackers] = useState<undefined | TTracker[]>(undefined)
-	const [now, setNow] = useState<number>(new Date().getTime())
 	const [nextTrackerStartTime, setNextTrackerStartTime] = useState<
 		number | undefined
 	>(undefined)
-	const tick = useTick()
 	const {
 		data: categories,
 		isLoading: isLoadingCategories,
@@ -32,46 +25,23 @@ export default function TimetrackerPage({ user }: Props) {
 	const {
 		data: todaysTrackers,
 		isLoading: isLoadingTrackers,
-		error: trackersError
+		error: trackersError,
+		reload
 	} = useGetTodaysTrackers()
+	const timetracker = new Timetracker(user.uid)
 
 	useEffect(() => {
-		if (todaysTrackers) {
-			if (todaysTrackers.length) {
-				setTrackers(todaysTrackers)
-				setItemStart(maxBy(todaysTrackers, 'end')?.end)
-			} else {
-				setTrackers([])
-			}
+		if (todaysTrackers?.length) {
+			setItemStart(maxBy(todaysTrackers, 'end')?.end)
 		}
 	}, [todaysTrackers])
-
-	useEffect(() => {
-		setNow(tick)
-	}, [tick])
 
 	const setItemStart = (timestamp?: number) => {
 		setNextTrackerStartTime(timestamp || new Date().getTime())
 	}
 
-	const onUpdateTracker = async (tracker: TTracker) => {
-		const timetracker = new Timetracker(user.uid)
-		const updatedTracker = await timetracker.update(tracker)
-		const newList = trackers?.map((t) =>
-			t.id === updatedTracker.id ? updatedTracker : t
-		)
-		setTrackers(newList)
-	}
-
-	const onSubmitNewTracker = async (tracker: TTrackerInput) => {
-		const timetracker = new Timetracker(user.uid)
-		const newTracker = await timetracker.create(tracker)
-		setItemStart(newTracker.end)
-		const list = [...(trackers || []), newTracker]
-		setTrackers(list)
-	}
 	if (isLoadingCategories || isLoadingTrackers) {
-		return <div>loading data</div>
+		return <LoadingBox />
 	}
 
 	if (trackersError) {
@@ -86,21 +56,26 @@ export default function TimetrackerPage({ user }: Props) {
 		<div className='w-9/12 mx-auto mb-20 mt-10 px-10 gap-y-8 flex flex-col flex-1 '>
 			<section className='relative flex-1'>
 				<div className='absolute h-full overflow-auto w-full'>
-					{trackers?.length && categories ? (
+					{todaysTrackers?.length && categories ? (
 						<TimetrackerList
-							list={trackers}
+							list={todaysTrackers}
 							categories={categories}
-							onUpdateTracker={onUpdateTracker}
+							reload={reload}
+							userId={user.uid}
 						/>
 					) : null}
 				</div>
 			</section>
 
-			{nextTrackerStartTime && categories?.length ? (
-				<section className='flex-none'>
+			<section className='flex-none'>
+				{nextTrackerStartTime && categories?.length ? (
 					<TimetrackerForm
 						shouldSetEndToNow={true}
-						onSubmit={onSubmitNewTracker}
+						onSubmit={async (data) => {
+							await timetracker.create(data)
+							setItemStart(data.end)
+							reload()
+						}}
 						categories={categories}
 						initialValues={{
 							start: nextTrackerStartTime,
@@ -109,18 +84,10 @@ export default function TimetrackerPage({ user }: Props) {
 							info: ''
 						}}
 					/>
-				</section>
-			) : (
-				<section>
-					<div>
-						<button onClick={() => setItemStart()}>
-							<span className='font-bold'>Start Day</span>
-						</button>
-						<span>at: </span>{' '}
-						<span>{TimeUtils.timestampToHourMinute(now)}</span>
-					</div>
-				</section>
-			)}
+				) : (
+					<StartDayBtn onClick={setItemStart} />
+				)}
+			</section>
 		</div>
 	)
 }

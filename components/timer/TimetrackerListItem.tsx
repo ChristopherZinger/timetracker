@@ -1,27 +1,22 @@
 import { useContext, useState } from 'react'
 import type { TCategory } from '../../types/domains/Category'
-import { TTracker, TTrackerInput } from '../../types/domains/Timetracker'
+import { TTracker } from '../../types/domains/Timetracker'
 import { TimeUtils } from '../../types/utils/time'
 import TimetrackerForm from './TimetrackerForm'
 
 type Props = {
 	item: TTracker
 	categories: TCategory[]
-	onUpdateTracker: (tracker: TTracker) => Promise<void>
+	onEdit: (data: TTracker) => Promise<void>
 }
 
 export default function TimetrackerListItem({
 	item,
 	categories,
-	onUpdateTracker
+	onEdit
 }: Props) {
 	const formatTime = TimeUtils.timestampToHourMinute
 	const [editMode, setEditMode] = useState(false)
-
-	const editItem = async (data: TTrackerInput) => {
-		await onUpdateTracker({ id: item.id, ...data })
-		setEditMode(false)
-	}
 
 	return (
 		<>
@@ -29,7 +24,7 @@ export default function TimetrackerListItem({
 				<div>
 					<button onClick={() => setEditMode(false)}>close</button>
 					<TimetrackerForm
-						onSubmit={editItem}
+						onSubmit={(d) => onEdit({ ...d, id: item.id })}
 						categories={categories}
 						initialValues={item}
 						hideStartInput={false}

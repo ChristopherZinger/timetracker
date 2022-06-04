@@ -36,7 +36,7 @@ export default function TimetrackerForm({
 		setFormValues((d) => ({ ...d, [key]: value }))
 	}
 
-	const handleSubmit = (e: FormEvent) => {
+	async function handleSubmit(e: FormEvent) {
 		e.preventDefault()
 		onSubmit(formValues)
 		startTick()

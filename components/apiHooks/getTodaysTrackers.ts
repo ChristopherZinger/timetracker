@@ -34,5 +34,5 @@ export default function useGetTodaysTrackers () {
     handleCall()
   }, [])
 
-  return { error, data, isLoading, relaod: async () => await handleCall() }
+  return { error, data, isLoading, reload: async () => await handleCall() }
 }
