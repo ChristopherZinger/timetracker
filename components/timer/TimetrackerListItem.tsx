@@ -24,7 +24,7 @@ export default function TimetrackerListItem({
 	}
 
 	return (
-		<div className='mx-6'>
+		<>
 			{editMode ? (
 				<div>
 					<button onClick={() => setEditMode(false)}>close</button>
@@ -36,7 +36,10 @@ export default function TimetrackerListItem({
 					/>
 				</div>
 			) : (
-				<div className='flex gap-x-8 py-4'>
+				<div
+					className='flex gap-x-8 py-4 px-6 cursor-pointer border border-white hover:border-zinc-200'
+					onClick={() => setEditMode(true)}
+				>
 					<span className='flex-none'>
 						{formatTime(item.start)}
 						{' - '}
@@ -49,9 +52,8 @@ export default function TimetrackerListItem({
 						}
 					</span>
 					<span className='flex-1'>{item.info}</span>
-					<button onClick={() => setEditMode(true)}>edit</button>
 				</div>
 			)}
-		</div>
+		</>
 	)
 }

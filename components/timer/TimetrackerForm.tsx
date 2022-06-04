@@ -46,7 +46,7 @@ export default function TimetrackerForm({
 		<form onSubmit={handleSubmit}>
 			<div className='flex px-6 py-4 gap-x-8 border'>
 				{hideStartInput ? null : (
-					<div className='flex-1'>
+					<div className='flex'>
 						<input
 							type='time'
 							name='start'
