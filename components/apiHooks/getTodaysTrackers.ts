@@ -9,15 +9,15 @@ export default function useGetTodaysTrackers () {
   const [error, setError] = useState<undefined | Error>(undefined)
   const { user } = useContext(UserContext)
 
-  useEffect(() => {
-    const getTrackers = async (): Promise<TTracker[]> => {
-      if (!user) {
-        throw new AppError('user_required_to_query_trackers')
-      }
-      const timetracker = new Timetracker(user.uid)
-      return await timetracker.getTodaysTrackers()
+  async function getTrackers (): Promise<TTracker[]> {
+    if (!user) {
+      throw new AppError('user_required_to_query_trackers')
     }
+    const timetracker = new Timetracker(user.uid)
+    return await timetracker.getTodaysTrackers()
+  }
 
+  async function handleCall () {
     setIsLoading(true)
     getTrackers()
       .then((d) => {
@@ -28,7 +28,11 @@ export default function useGetTodaysTrackers () {
         setError(err)
         setIsLoading(false)
       })
+  }
+
+  useEffect(() => {
+    handleCall()
   }, [])
 
-  return { error, data, isLoading }
+  return { error, data, isLoading, relaod: async () => await handleCall() }
 }
