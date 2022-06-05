@@ -85,7 +85,9 @@ export default function TimetrackerPage({ user }: Props) {
 						}}
 					/>
 				) : (
-					<StartDayBtn onClick={setItemStart} />
+					<StartDayBtn
+						onClick={() => setItemStart(new Date().getTime())}
+					/>
 				)}
 			</section>
 		</div>
