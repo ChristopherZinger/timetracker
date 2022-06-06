@@ -30,20 +30,22 @@ export default function DoughnutTile({ date, userId }: Props) {
 		const labelsValuesTuple = Object.values(
 			data.summary.totalMinutesPerCategory
 		).reduce(
-			(acc, val): [string[], number[]] => {
+			(acc, val): [string[], number[], string[]] => {
 				return [
 					[...acc[0], val.category.name],
-					[...acc[1], val.nrOfMinutes]
+					[...acc[1], val.nrOfMinutes],
+					[...acc[2], val.category.colorHex]
 				]
 			},
-			[[], []] as any
+			[[], [], []] as any
 		)
+
 		return {
 			labels: labelsValuesTuple[0],
 			datasets: [
 				{
 					data: labelsValuesTuple[1],
-					backgroundColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)']
+					backgroundColor: labelsValuesTuple[2]
 				}
 			]
 		}
