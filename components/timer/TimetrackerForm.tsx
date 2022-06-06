@@ -3,6 +3,8 @@ import { TCategory } from '../../types/domains/Category'
 import { TTrackerInput } from '../../types/domains/Timetracker'
 import { TimeUtils } from '../../types/utils/time'
 import { useTick } from '../hooks/Tick'
+import { InputErrorsMap } from '../../types/utils/validator'
+import InputErrors from '../form/InputErrors'
 
 type Props = {
 	initialValues: TTrackerInput
@@ -10,12 +12,14 @@ type Props = {
 	categories: TCategory[]
 	shouldSetEndToNow?: boolean
 	hideStartInput?: boolean
+	errors: InputErrorsMap
 }
 
 export default function TimetrackerForm({
 	initialValues,
 	onSubmit,
 	categories,
+	errors,
 	shouldSetEndToNow = false,
 	hideStartInput = true
 }: Props) {
@@ -63,6 +67,7 @@ export default function TimetrackerForm({
 								handleInputChange('start', date.getTime())
 							}}
 						/>
+						<InputErrors errors={errors} name='start' />
 					</div>
 				)}
 				<div className='flex-none'>
@@ -80,6 +85,7 @@ export default function TimetrackerForm({
 							handleInputChange('end', date.getTime())
 						}}
 					/>
+					<InputErrors errors={errors} name='end' />
 				</div>
 				<div className='flex-none'>
 					<select
@@ -97,6 +103,7 @@ export default function TimetrackerForm({
 								</option>
 							))}
 					</select>
+					<InputErrors errors={errors} name='category' />
 				</div>
 				<div className='flex-1'>
 					<input
@@ -110,6 +117,7 @@ export default function TimetrackerForm({
 							handleInputChange('info', target.value)
 						}
 					/>
+					<InputErrors errors={errors} name='info' />
 				</div>
 
 				<div className='flex-none'>

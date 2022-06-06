@@ -5,6 +5,7 @@ import {
 	TCategoryInput
 } from '../../types/domains/Category'
 import CategoryDot from './CategoryDot'
+import { InputErrorsMap } from '../../types/utils/validator'
 import CategoryForm from './CategoryForm'
 
 type Props = {
@@ -17,14 +18,21 @@ export default function CategoryList({ reload, categories, userId }: Props) {
 	const [selectedCategory, setSelectedCategory] = useState<
 		undefined | string
 	>(undefined)
+	const [inputErrors, setInputErrors] = useState<InputErrorsMap>({})
 
 	const category = new Category(userId)
 
 	async function onUpdateCategory(
 		data: { id: string } & Partial<TCategoryInput>
 	) {
-		await category.update(data.id, data)
-		await reload()
+		const errors = await category.update(data.id, data)
+		if (errors) {
+			setInputErrors(errors)
+		} else {
+			setInputErrors({})
+			setSelectedCategory(undefined)
+			await reload()
+		}
 	}
 
 	async function onDeactivateCategory(id: string) {
@@ -40,28 +48,34 @@ export default function CategoryList({ reload, categories, userId }: Props) {
 						<div className='px-4 py-6 flex gap-x-8 border'>
 							<div className='flex-1'>
 								<CategoryForm
-									onSubmit={async (data) => {
+									onSubmit={async (data) =>
 										await onUpdateCategory({
 											id: c.id,
 											...data
 										})
-										setSelectedCategory(undefined)
-									}}
+									}
 									initialValues={c}
+									errors={inputErrors}
 								/>
 							</div>
-							<button
-								className='font-bold'
-								onClick={() => onDeactivateCategory(c.id)}
-							>
-								remove
-							</button>
-							<button
-								className='font-bold'
-								onClick={() => setSelectedCategory(undefined)}
-							>
-								cancel
-							</button>
+							<div>
+								<button
+									className='font-bold'
+									onClick={() => onDeactivateCategory(c.id)}
+								>
+									remove
+								</button>
+							</div>
+							<div>
+								<button
+									className='font-bold'
+									onClick={() =>
+										setSelectedCategory(undefined)
+									}
+								>
+									cancel
+								</button>
+							</div>
 						</div>
 					) : (
 						<div onClick={() => setSelectedCategory(c.id)}>
