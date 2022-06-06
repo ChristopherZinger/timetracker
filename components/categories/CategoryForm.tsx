@@ -9,7 +9,8 @@ type Props = {
 export default function CategoryForm({ onSubmit, initialValues = {} }: Props) {
 	const [data, setData] = useState<TCategoryInput>({
 		abbreviation: '',
-		name: ''
+		name: '',
+		colorHex: '#FC5A03'
 	})
 
 	const handleSubmit = async (e: FormEvent) => {
@@ -54,6 +55,18 @@ export default function CategoryForm({ onSubmit, initialValues = {} }: Props) {
 						onChange={({ target }) =>
 							setData((d) => ({ ...d, name: target.value }))
 						}
+					/>
+				</div>
+				<div className='flex-none'>
+					<input
+						type='color'
+						id='color'
+						name='color'
+						value={data.colorHex}
+						onChange={({ target }) => {
+							console.log(target.value)
+							setData((d) => ({ ...d, colorHex: target.value }))
+						}}
 					/>
 				</div>
 				<button type='submit'>

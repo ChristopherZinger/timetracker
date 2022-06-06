@@ -24,6 +24,7 @@ export default function TimetrackerForm({
 	const stopTick = () => setShouldTickRun(false)
 	const startTick = () => setShouldTickRun(true)
 	const tick = useTick()
+	const timeUtils = new TimeUtils()
 
 	useEffect(() => {
 		shouldTickRun && handleInputChange('end', new Date().getTime())
@@ -51,7 +52,7 @@ export default function TimetrackerForm({
 							type='time'
 							name='start'
 							id='start'
-							value={TimeUtils.timestampToHourMinute(
+							value={timeUtils.timestampToHourMinute(
 								formValues.start
 							)}
 							onChange={({ target }) => {
@@ -69,7 +70,7 @@ export default function TimetrackerForm({
 						type='time'
 						name='end'
 						id='end'
-						value={TimeUtils.timestampToHourMinute(formValues.end)}
+						value={timeUtils.timestampToHourMinute(formValues.end)}
 						onChange={({ target }) => {
 							stopTick()
 							const [hours, minutes] = target.value.split(':')
