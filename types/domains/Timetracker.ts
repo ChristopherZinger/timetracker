@@ -11,6 +11,7 @@ import {
   updateDoc
 } from 'firebase/firestore'
 import { InputErrorsMap, Validator } from '../utils/validator'
+import { Timeframe, TimeUtils } from '../utils/time'
 import { Collections } from './utils/collections'
 import { getGenericConverter } from './utils/genericConverger'
 import { number, string } from 'yup'
@@ -31,8 +32,8 @@ export class Timetracker {
   private collection: CollectionReference<TTracker>
   constructor(
     private userId: string,
-    private validator = new TimetrackerValidator(yup)
-  ) {
+    private validator = new TimetrackerValidator(yup),
+    private timer = new TimeUtils()) {
     const firestore = getFirestore()
     this.collection = collection(
       firestore,
@@ -57,21 +58,27 @@ export class Timetracker {
     return errors ? errors : await updateDoc(doc(this.collection, data.id), newData)
   }
 
-  public async getTodaysTrackers (): Promise<TTracker[]> {
-    const today = new Date(new Date().toDateString())
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-
+  private async getTrackersForTimeframe ({ start, end }: Timeframe) {
     return (
       await getDocs(
         query(
           this.collection,
-          where('start', '>=', today.getTime()),
-          where('start', '<', tomorrow.getTime()),
+          where('start', '>=', start),
+          where('start', '<', end),
           orderBy('start', 'asc')
         )
       )
     ).docs.map((s) => s.data())
+  }
+
+  public async getTrackersForDay (date: Date): Promise<TTracker[]> {
+    const timeframe = this.timer.getDayTimeframeForDate(date)
+    return await this.getTrackersForTimeframe(timeframe)
+  }
+
+  public async getTodaysTrackers (): Promise<TTracker[]> {
+    const timeframe = this.timer.getDayTimeframeForDate(new Date())
+    return await this.getTrackersForTimeframe(timeframe)
   }
 }
 

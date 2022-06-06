@@ -65,6 +65,10 @@ export class Category {
     await this.update(id, { isActive: false })
   }
 
+  public async getAll (): Promise<TCategory[]> {
+    return (await getDocs(this.collection)).docs.map(s => s.data())
+  }
+
   public async getAllActive (): Promise<TCategory[]> {
     return (
       await getDocs(query(this.collection, where('isActive', '==', true)))
