@@ -7,6 +7,7 @@ export type TCategory = {
   abbreviation: string
   name: string
   isActive: boolean
+  colorHex: string
 }
 
 export type TCategoryInput = Omit<TCategory, 'id' | 'isActive'>

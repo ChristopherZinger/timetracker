@@ -9,6 +9,7 @@ type Props = {
 export default function StartDayBtn({ onClick }: Props) {
 	const [now, setNow] = useState<number>(new Date().getTime())
 	const tick = useTick()
+	const timeUtils = new TimeUtils()
 
 	useEffect(() => {
 		setNow(tick)
@@ -20,7 +21,7 @@ export default function StartDayBtn({ onClick }: Props) {
 				<span className='font-bold'>Start Day</span>
 			</button>
 			<span>at: </span>
-			<span>{TimeUtils.timestampToHourMinute(now)}</span>
+			<span>{timeUtils.timestampToHourMinute(now)}</span>
 		</div>
 	)
 }

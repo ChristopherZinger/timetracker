@@ -2,6 +2,7 @@ import { useContext, useState } from 'react'
 import type { TCategory } from '../../types/domains/Category'
 import { TTracker } from '../../types/domains/Timetracker'
 import { TimeUtils } from '../../types/utils/time'
+import CategoryDot from '../categories/CategoryDot'
 import TimetrackerForm from './TimetrackerForm'
 
 type Props = {
@@ -15,8 +16,9 @@ export default function TimetrackerListItem({
 	categories,
 	onEdit
 }: Props) {
-	const formatTime = TimeUtils.timestampToHourMinute
+	const timeUtils = new TimeUtils()
 	const [editMode, setEditMode] = useState(false)
+	const category = categories.find((c) => c.id === item.categoryId)
 
 	return (
 		<>
@@ -32,20 +34,18 @@ export default function TimetrackerListItem({
 				</div>
 			) : (
 				<div
-					className='flex gap-x-8 py-4 px-6 cursor-pointer border border-white hover:border-zinc-200'
+					className='flex gap-x-8 py-4 px-6 place-items-center cursor-pointer border border-white hover:border-zinc-200'
 					onClick={() => setEditMode(true)}
 				>
 					<span className='flex-none'>
-						{formatTime(item.start)}
+						{timeUtils.timestampToHourMinute(item.start)}
 						{' - '}
-						{formatTime(item.end)}
+						{timeUtils.timestampToHourMinute(item.end)}
 					</span>
-					<span className='flex-none'>
-						{
-							categories.find((c) => c.id === item.categoryId)
-								?.abbreviation
-						}
+					<span>
+						<CategoryDot colorHex={category?.colorHex || ''} />
 					</span>
+					<span className='flex-none'>{category?.abbreviation}</span>
 					<span className='flex-1'>{item.info}</span>
 				</div>
 			)}

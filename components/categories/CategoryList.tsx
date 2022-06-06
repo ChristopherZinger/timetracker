@@ -4,6 +4,7 @@ import {
 	TCategory,
 	TCategoryInput
 } from '../../types/domains/Category'
+import CategoryDot from './CategoryDot'
 import CategoryForm from './CategoryForm'
 
 type Props = {
@@ -75,7 +76,8 @@ export default function CategoryList({ reload, categories, userId }: Props) {
 
 function CategoryListItem({ item }: { item: TCategory }) {
 	return (
-		<div className='flex py-1 cursor-pointer'>
+		<div className='flex py-1 place-items-center cursor-pointer gap-x-4'>
+			<CategoryDot colorHex={item.colorHex} />
 			<div className='basis-12'>{item.abbreviation}</div>
 			<div className='flex-1'>{item.name}</div>
 		</div>
