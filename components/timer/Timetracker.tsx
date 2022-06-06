@@ -2,6 +2,7 @@ import type { User } from 'firebase/auth'
 import { maxBy } from 'lodash'
 import { useEffect, useState } from 'react'
 import { Timetracker } from '../../types/domains/Timetracker'
+import { InputErrorsMap } from '../../types/utils/validator'
 import useGetActiveCategories from '../apiHooks/getActiveCategories'
 import useGetTodaysTrackers from '../apiHooks/getTodaysTrackers'
 import LoadingBox from '../common/LoadingBox'
@@ -14,6 +15,7 @@ type Props = {
 }
 
 export default function TimetrackerPage({ user }: Props) {
+	const [errors, setErrors] = useState<InputErrorsMap>({})
 	const [nextTrackerStartTime, setNextTrackerStartTime] = useState<
 		number | undefined
 	>(undefined)
@@ -72,10 +74,16 @@ export default function TimetrackerPage({ user }: Props) {
 					<TimetrackerForm
 						shouldSetEndToNow={true}
 						onSubmit={async (data) => {
-							await timetracker.create(data)
-							setItemStart(data.end)
-							reload()
+							const errors = await timetracker.create(data)
+							if (errors) {
+								setErrors(errors)
+							} else {
+								setErrors({})
+								setItemStart(data.end)
+								reload()
+							}
 						}}
+						errors={errors}
 						categories={categories}
 						initialValues={{
 							start: nextTrackerStartTime,
