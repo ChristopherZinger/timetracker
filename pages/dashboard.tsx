@@ -1,7 +1,7 @@
 import { ReactElement, useContext } from "react";
 import LoadingBox from "../components/common/LoadingBox";
 import Nav from "../components/common/Nav";
-import Daily from "../components/dashboard/Daily";
+import WeekDoughnutTiles from "../components/dashboard/WeekDoughnutTiles";
 import { UserContext, UserProvider } from "../components/UserContext";
 
 export default function Dashboard() {
@@ -14,7 +14,7 @@ export default function Dashboard() {
   return (
     <>
       <Nav />
-      <Daily userId={user.uid} />
+      <WeekDoughnutTiles userId={user.uid} />
     </>
   );
 }

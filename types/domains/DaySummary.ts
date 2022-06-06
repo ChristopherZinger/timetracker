@@ -132,7 +132,7 @@ export class DaySummary {
     }
   }
 
-  public async createDaySummryForDate (date: Date) {
+  public async createDaySummaryForDate (date: Date) {
     const summary = await this.calculateDaySummaryForDate(date)
     await this.create(summary)
   }

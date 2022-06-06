@@ -6,10 +6,6 @@ export type Timeframe = {
 }
 
 export type MonthIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11
-export type DayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6
-export function isDayIndex (day: number): day is DayIndex {
-  return [0, 1, 2, 3, 4, 5, 6].includes(day)
-}
 
 export class TimeUtils {
   private dayjs: (date?: day.ConfigType) => day.Dayjs
