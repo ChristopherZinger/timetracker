@@ -37,6 +37,7 @@ type CategorySummary = Record<
       abbreviation: string
       name: string
       id: string
+      colorHex: string
     }
     nrOfMinutes: number
   }
@@ -99,7 +100,8 @@ export class DaySummary {
             category: {
               abbreviation: category.abbreviation,
               id: category.id,
-              name: category.name
+              name: category.name,
+              colorHex: category.colorHex
             }
           }
         }
@@ -140,7 +142,6 @@ export class DaySummary {
   private async create (summary: TDaySummaryInput): Promise<void> {
     const { day: { day, month, year } } = summary
     const id = `${year}:${month}:${day}`
-    console.log(id, this.collection)
     await setDoc(doc(this.collection, id), summary)
   }
 
