@@ -3,7 +3,6 @@ import { TCategory } from '../../types/domains/Category'
 import { TTrackerInput } from '../../types/domains/Timetracker'
 import { TimeUtils } from '../../types/utils/time'
 import { useTick } from '../hooks/Tick'
-import * as yup from 'yup'
 import { InputErrorsMap } from '../../types/utils/validator'
 import InputErrors from '../form/InputErrors'
 

@@ -81,7 +81,8 @@ class CategoryValidator extends Validator {
         .string()
         .required()
         .length(2, 'Abbreviation has to be 2 characters long.'),
-      name: this.yup.string()
+      name: this.yup.string(),
+      colorHex: this.yup.string().required().matches(/^#[0-9a-f]{6}$/i, 'This is not valid hex color.')
     })
   }
 }

@@ -80,27 +80,23 @@ export default function CategoryForm({
 						<InputErrors name='name' errors={errors} />
 					</div>
 				</div>
-
-				<div>
-					<button type='submit'>
-						<span className='font-bold'>save</span>
-					</button>
-				</div>
 				<div className='flex-none'>
 					<input
 						type='color'
 						id='color'
 						name='color'
 						value={data.colorHex}
-						onChange={({ target }) => {
-							console.log(target.value)
+						onChange={({ target }) =>
 							setData((d) => ({ ...d, colorHex: target.value }))
-						}}
+						}
 					/>
+					<InputErrors name='colorHex' errors={errors} />
 				</div>
-				<button type='submit'>
-					<span className='font-bold'>save</span>
-				</button>
+				<div>
+					<button type='submit'>
+						<span className='font-bold'>save</span>
+					</button>
+				</div>
 			</div>
 		</form>
 	)
