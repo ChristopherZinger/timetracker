@@ -1,5 +1,5 @@
 import { Timetracker, TTracker } from './Timetracker'
-import { TimeUtils } from '../utils/time'
+import { MonthIndex, TimeUtils } from '../utils/time'
 import { Category } from './Category'
 import { AppError } from '../../utils/appError'
 import {
@@ -13,15 +13,13 @@ import {
 import { Collections } from './utils/collections'
 import { getGenericConverter } from './utils/genericConverger'
 
-type MonthIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11
-
 type DayDate = {
   day: number
   month: MonthIndex
   year: number
 }
 
-type TDaySummary = {
+export type TDaySummary = {
   id: string
   day: DayDate
   summary: {
