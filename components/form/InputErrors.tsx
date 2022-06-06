@@ -11,8 +11,8 @@ export default function InputErrors({
 		<>
 			{errors[name] ? (
 				<div className='text-red-500 flex flex-col'>
-					{errors[name].map((e) => (
-						<div>* {e}</div>
+					{errors[name].map((e, i) => (
+						<div key={i}>* {e}</div>
 					))}
 				</div>
 			) : null}

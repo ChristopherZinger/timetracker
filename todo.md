@@ -13,3 +13,7 @@
     -   tracker update
     -   category create
     -   category update
+-   category colors for charts
+-   category display order selectable by user
+-   remove dayjs from componetns - abstract all function
+-   create methods isBeforeToday isAfterToday

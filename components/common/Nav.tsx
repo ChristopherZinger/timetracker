@@ -1,7 +1,7 @@
 import { getAuth, signOut } from 'firebase/auth'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { BASE_URL } from '../../types/baseUrls'
 import { UserContext } from '../UserContext'
 import NavItem from './NavItem'
@@ -25,6 +25,11 @@ const Nav = () => {
 			<ul className='flex gap-x-8'>
 				{user ? (
 					<>
+						<NavItem isActive={isLinkActive(BASE_URL.dashboard)}>
+							<Link href={`/${BASE_URL.dashboard}`}>
+								dashboard
+							</Link>
+						</NavItem>
 						<NavItem isActive={isLinkActive(BASE_URL.categories)}>
 							<Link href={`/${BASE_URL.categories}`}>
 								categories
