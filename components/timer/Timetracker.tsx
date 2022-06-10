@@ -10,6 +10,7 @@ import TimetrackerForm from './TimetrackerForm'
 import TimetrackerList from './TimetrackerList'
 import dayjs from 'dayjs'
 import isToday from 'dayjs/plugin/isToday'
+import TimetrackerSelectedDateController from './TimetrackerSelectedDateController'
 dayjs.extend(isToday)
 
 type Props = {
@@ -84,18 +85,9 @@ export default function TimetrackerPage({ user }: Props) {
 	return (
 		<div className='w-9/12 mx-auto mb-20 mt-10 px-10 gap-y-8 flex flex-col flex-1 '>
 			<section>
-				<input
-					type='date'
-					name='date'
-					id='date'
-					onChange={({ target: { value } }) =>
-						setSelectedDate(
-							dayjs(value)
-								.set('hours', new Date().getHours())
-								.toDate()
-						)
-					}
-					value={dayjs(selectedDate).format('YYYY-MM-DD')}
+				<TimetrackerSelectedDateController
+					selectedDate={selectedDate}
+					onDateChange={(date) => setSelectedDate(date)}
 				/>
 			</section>
 			<section className='relative flex-1'>
