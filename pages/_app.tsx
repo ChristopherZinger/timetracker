@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import "../utils/initFirebase";
 import type { ReactElement, ReactNode } from "react";
 import type { NextPage } from "next";
+import "../utils/fontawesome";
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
