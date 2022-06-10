@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
 
-export function useTick() {
-	const [tick, setTick] = useState(new Date().getTime())
+export function useMinutes() {
+	const [time, setTime] = useState(new Date())
+
+	function didMinutePassed(lastDate: Date): boolean {
+		return lastDate.getMinutes() !== new Date().getMinutes()
+	}
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			setTick(new Date().getTime())
+			didMinutePassed(time) && setTime(new Date())
 		}, 1000)
 		return () => clearInterval(interval)
-	}, [tick])
+	}, [time])
 
-	return tick
+	return time
 }
