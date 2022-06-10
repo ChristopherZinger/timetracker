@@ -89,7 +89,7 @@ class TimetrackerValidator extends Validator {
     this.schema = this.yup.object().shape({
       start: number().required(),
       end: number().required(),
-      category: string().required(),
+      categoryId: string().required(),
       info: string()
     })
   }
