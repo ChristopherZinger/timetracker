@@ -1,46 +1,73 @@
 import type { User } from 'firebase/auth'
 import { maxBy } from 'lodash'
 import { useEffect, useState } from 'react'
-import { Timetracker } from '../../types/domains/Timetracker'
+import { Timetracker, TTrackerInput } from '../../types/domains/Timetracker'
 import { InputErrorsMap } from '../../types/utils/validator'
 import useGetActiveCategories from '../apiHooks/getActiveCategories'
-import useGetTodaysTrackers from '../apiHooks/getTodaysTrackers'
+import useGetTrackersForDay from '../apiHooks/getTrackersForDay'
 import LoadingBox from '../common/LoadingBox'
-import StartDayBtn from './StartDayBtn'
 import TimetrackerForm from './TimetrackerForm'
 import TimetrackerList from './TimetrackerList'
+import dayjs from 'dayjs'
+import isToday from 'dayjs/plugin/isToday'
+dayjs.extend(isToday)
 
 type Props = {
 	user: User
 }
 
 export default function TimetrackerPage({ user }: Props) {
-	const [errors, setErrors] = useState<InputErrorsMap>({})
-	const [nextTrackerStartTime, setNextTrackerStartTime] = useState<
-		number | undefined
-	>(undefined)
+	const [selectedDate, setSelectedDate] = useState(new Date())
+	const [timetrackerFormErrors, setTimetrackerFormErrors] =
+		useState<InputErrorsMap>({})
 	const {
 		data: categories,
 		isLoading: isLoadingCategories,
 		error: categoriesError
 	} = useGetActiveCategories()
 	const {
-		data: todaysTrackers,
+		data: trackersForSelectedDate,
 		isLoading: isLoadingTrackers,
 		error: trackersError,
 		reload
-	} = useGetTodaysTrackers()
+	} = useGetTrackersForDay(selectedDate)
+	const [initialValues, setInitialValues] = useState<TTrackerInput>({
+		start: selectedDate.getTime(),
+		categoryId: '',
+		end: selectedDate.getTime(),
+		info: ''
+	})
 	const timetracker = new Timetracker(user.uid)
 
-	useEffect(() => {
-		if (todaysTrackers?.length) {
-			setItemStart(maxBy(todaysTrackers, 'end')?.end)
-		}
-	}, [todaysTrackers])
-
-	const setItemStart = (timestamp?: number) => {
-		setNextTrackerStartTime(timestamp || new Date().getTime())
+	function setItemStart(timestamp: number) {
+		setInitialValues((v) => ({
+			...v,
+			start: timestamp
+		}))
 	}
+
+	useEffect(() => {
+		const d = maxBy(trackersForSelectedDate || [], 'end')
+		if (d) {
+			setInitialValues((v) => ({
+				...v,
+				start: d.end,
+				end: d.end
+			}))
+		} else {
+			setInitialValues((v) => ({
+				...v,
+				start: selectedDate.getTime(),
+				end: selectedDate.getTime()
+			}))
+		}
+	}, [trackersForSelectedDate])
+
+	useEffect(() => {
+		if (categories?.length) {
+			setInitialValues((v) => ({ ...v, categoryId: categories[0].id }))
+		}
+	}, [categories])
 
 	if (isLoadingCategories || isLoadingTrackers) {
 		return <LoadingBox />
@@ -50,19 +77,34 @@ export default function TimetrackerPage({ user }: Props) {
 		return <div>Could not load trackers for today.</div>
 	}
 
-	if (categoriesError) {
+	if (categoriesError || !categories?.length) {
 		return <div>Could not load categories.</div>
 	}
 
 	return (
 		<div className='w-9/12 mx-auto mb-20 mt-10 px-10 gap-y-8 flex flex-col flex-1 '>
+			<section>
+				<input
+					type='date'
+					name='date'
+					id='date'
+					onChange={({ target: { value } }) =>
+						setSelectedDate(
+							dayjs(value)
+								.set('hours', new Date().getHours())
+								.toDate()
+						)
+					}
+					value={dayjs(selectedDate).format('YYYY-MM-DD')}
+				/>
+			</section>
 			<section className='relative flex-1'>
 				<div className='absolute h-full overflow-auto w-full'>
-					{todaysTrackers?.length && categories ? (
+					{trackersForSelectedDate?.length && categories ? (
 						<TimetrackerList
-							list={todaysTrackers}
+							list={trackersForSelectedDate}
 							categories={categories}
-							reload={reload}
+							reload={() => reload(selectedDate)}
 							userId={user.uid}
 						/>
 					) : null}
@@ -70,33 +112,22 @@ export default function TimetrackerPage({ user }: Props) {
 			</section>
 
 			<section className='flex-none'>
-				{nextTrackerStartTime && categories?.length ? (
-					<TimetrackerForm
-						shouldSetEndToNow={true}
-						onSubmit={async (data) => {
-							const errors = await timetracker.create(data)
-							if (errors) {
-								setErrors(errors)
-							} else {
-								setErrors({})
-								setItemStart(data.end)
-								reload()
-							}
-						}}
-						errors={errors}
-						categories={categories}
-						initialValues={{
-							start: nextTrackerStartTime,
-							categoryId: categories[0].id,
-							end: new Date().getTime(),
-							info: ''
-						}}
-					/>
-				) : (
-					<StartDayBtn
-						onClick={() => setItemStart(new Date().getTime())}
-					/>
-				)}
+				<TimetrackerForm
+					shouldSetEndToNow={dayjs(selectedDate).isToday()}
+					onSubmit={async (data) => {
+						const errors = await timetracker.create(data)
+						if (errors) {
+							setTimetrackerFormErrors(errors)
+						} else {
+							setTimetrackerFormErrors({})
+							setItemStart(data.end)
+							reload(selectedDate)
+						}
+					}}
+					errors={timetrackerFormErrors}
+					categories={categories}
+					initialValues={initialValues}
+				/>
 			</section>
 		</div>
 	)
