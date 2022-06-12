@@ -1,6 +1,5 @@
 import dayjs from 'dayjs'
-import isToday from 'dayjs/plugin/isToday'
-dayjs.extend(isToday)
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type Props = {
 	onDateChange: (date: Date) => void
@@ -29,10 +28,15 @@ export default function TimetrackerSelectedDateController({
 			<button
 				onClick={() => onDateChange(getDateDayBefore(selectedDate))}
 			>
-				{'<'}
+				<FontAwesomeIcon icon='arrow-left' />
 			</button>
 			<button onClick={() => onDateChange(new Date())}>
-				<span className={`${isSelectedDateToday ? 'font -bold' : ''}`}>
+				{!isSelectedDateToday ? 'go to ' : ''}
+				<span
+					className={`${
+						isSelectedDateToday ? 'font-bold underline' : ''
+					}`}
+				>
 					Today
 				</span>
 			</button>
@@ -40,7 +44,7 @@ export default function TimetrackerSelectedDateController({
 				<button
 					onClick={() => onDateChange(getDateDayAfter(selectedDate))}
 				>
-					{'>'}
+					<FontAwesomeIcon icon='arrow-right' />
 				</button>
 			)}
 			<input
