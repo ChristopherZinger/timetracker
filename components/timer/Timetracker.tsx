@@ -9,9 +9,7 @@ import LoadingBox from '../common/LoadingBox'
 import TimetrackerForm from './TimetrackerForm'
 import TimetrackerList from './TimetrackerList'
 import dayjs from 'dayjs'
-import isToday from 'dayjs/plugin/isToday'
 import TimetrackerSelectedDateController from './TimetrackerSelectedDateController'
-dayjs.extend(isToday)
 
 type Props = {
 	user: User
