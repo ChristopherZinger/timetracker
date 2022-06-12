@@ -16,7 +16,7 @@ export default function DoughnutTileHeader({
 	return (
 		<header className='flex justify-between'>
 			<div>
-				{dayjs(date).format('dddd')}
+				{dayjs(date).format('MMM /  DD ddd')}
 				{!dayjs().isBefore(date) ? (
 					<span onClick={reload}> reload</span>
 				) : null}
