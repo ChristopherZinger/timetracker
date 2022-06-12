@@ -5,8 +5,6 @@ import LoadingBox from '../common/LoadingBox'
 import DoughnutChart, { DoughnutDataset } from './DoughnutChart'
 import DoughnutTileHeader from './DoughnutTileHeader'
 import dayjs from 'dayjs'
-import isToday from 'dayjs/plugin/isToday'
-dayjs.extend(isToday)
 
 type Props = {
 	date: Date

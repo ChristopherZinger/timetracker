@@ -1,7 +1,5 @@
 import dayjs from 'dayjs'
-import isToday from 'dayjs/plugin/isToday'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-dayjs.extend(isToday)
 
 type Props = {
 	onDateChange: (date: Date) => void
