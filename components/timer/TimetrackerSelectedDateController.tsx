@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { TimeUtils } from '../../types/utils/time'
 
 type Props = {
 	onDateChange: (date: Date) => void
@@ -20,8 +21,9 @@ export default function TimetrackerSelectedDateController({
 			? date
 			: new Date(date.setDate(date.getDate() + 1))
 	}
+	const timeUtils = new TimeUtils()
 
-	const isSelectedDateToday = dayjs(selectedDate).isToday()
+	const isSelectedDateToday = timeUtils.isToday(selectedDate)
 
 	return (
 		<nav className='flex gap-x-10'>

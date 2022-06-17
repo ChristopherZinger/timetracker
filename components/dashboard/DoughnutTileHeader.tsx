@@ -1,4 +1,3 @@
-import dayjs from 'dayjs'
 import { TimeUtils } from '../../types/utils/time'
 
 type Props = {
@@ -12,12 +11,13 @@ export default function DoughnutTileHeader({
 	date,
 	reload
 }: Props) {
-	const { minutesToHours } = new TimeUtils()
+	const timeUtils = new TimeUtils()
+
 	return (
 		<header className='flex justify-between'>
 			<div>
-				{dayjs(date).format('MMM /  DD ddd')}
-				{!dayjs().isBefore(date) ? (
+				{timeUtils.getDateInFormat(date, 'MMM /  DD ddd')}
+				{!timeUtils.isAfterToday(date) ? (
 					<span onClick={reload}> reload</span>
 				) : null}
 			</div>
@@ -25,7 +25,7 @@ export default function DoughnutTileHeader({
 				<div>
 					total:{' '}
 					<span className='font-bold'>
-						{minutesToHours(totalDayLengthInMinutes)} h
+						{timeUtils.minutesToHours(totalDayLengthInMinutes)} h
 					</span>
 				</div>
 			) : null}

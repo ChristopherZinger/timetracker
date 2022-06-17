@@ -4,7 +4,7 @@ import Button from '../common/Button'
 import LoadingBox from '../common/LoadingBox'
 import DoughnutChart, { DoughnutDataset } from './DoughnutChart'
 import DoughnutTileHeader from './DoughnutTileHeader'
-import dayjs from 'dayjs'
+import { TimeUtils } from '../../types/utils/time'
 
 type Props = {
 	date: Date
@@ -14,8 +14,10 @@ type Props = {
 export default function DoughnutTile({ date, userId }: Props) {
 	const { data, isLoading, error, reload } = useGetDaySummary(date)
 	const daySummary = new DaySummary(userId)
-	const isInTheFuture = dayjs(date).isAfter(new Date())
-	const isToday = dayjs(date).isToday()
+	const timeUtils = new TimeUtils()
+	const isAfterToday = timeUtils.isAfterToday(date)
+
+	const isToday = timeUtils.isToday(date)
 
 	async function regenerateDaySummary() {
 		await daySummary.createDaySummaryForDate(date)
@@ -69,7 +71,7 @@ export default function DoughnutTile({ date, userId }: Props) {
 					<DoughnutChart
 						dataset={convertDaySummaryToDoughnutDataset(data)}
 					/>
-				) : !isInTheFuture ? (
+				) : !isAfterToday ? (
 					<Button onClick={regenerateDaySummary}>
 						Generate day summary
 					</Button>
