@@ -52,7 +52,7 @@ export default function TimetrackerPage({ user }: Props) {
 			setInitialValues((v) => ({
 				...v,
 				start: d.end,
-				end: d.end
+				end: new Date().getTime()
 			}))
 		} else {
 			setInitialValues((v) => ({
