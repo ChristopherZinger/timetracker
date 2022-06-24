@@ -6,7 +6,9 @@ import {
   doc,
   getDocs,
   query,
-  where
+  orderBy,
+  where,
+  writeBatch,
 } from 'firebase/firestore'
 import { Collections } from './utils/collections'
 import { getGenericConverter } from './utils/genericConverger'
@@ -19,6 +21,7 @@ export type TCategory = {
   name: string
   isActive: boolean
   colorHex: string
+  order: number
 }
 
 export type TCategoryInput = Omit<TCategory, 'id' | 'isActive'>
@@ -40,10 +43,12 @@ export class Category {
 
   public async create (data: TCategoryInput): Promise<void | InputErrorsMap> {
     const { id } = doc(this.collection)
+    const nrOfAllCategories = (await this.getAll()).length + 1
     const category = {
       id,
       ...data,
-      isActive: true
+      isActive: true,
+      order: nrOfAllCategories
     }
     const errors = await this.validator.validate(data)
     return errors
@@ -71,8 +76,21 @@ export class Category {
 
   public async getAllActive (): Promise<TCategory[]> {
     return (
-      await getDocs(query(this.collection, where('isActive', '==', true)))
+      await getDocs(query(this.collection, orderBy('order', 'asc'), where('isActive', '==', true)))
     ).docs.map((s) => s.data())
+  }
+
+  public async swapOrder (categoryA: TCategory, categoryB: TCategory): Promise<void> {
+    const { order: orderA } = categoryA
+    const { order: orderB } = categoryB
+    const batch = writeBatch(getFirestore())
+    batch.update(doc(this.collection, categoryA.id), {
+      order: orderB
+    })
+    batch.update(doc(this.collection, categoryB.id), {
+      order: orderA
+    })
+    await batch.commit()
   }
 }
 
