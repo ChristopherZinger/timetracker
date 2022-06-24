@@ -7,6 +7,7 @@ import {
 import CategoryDot from './CategoryDot'
 import { InputErrorsMap } from '../../types/utils/validator'
 import CategoryForm from './CategoryForm'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type Props = {
 	userId: string
@@ -40,10 +41,21 @@ export default function CategoryList({ reload, categories, userId }: Props) {
 		await reload()
 	}
 
+	async function swapOrder(cA: TCategory, cB: TCategory) {
+		await category.swapOrder(cA, cB)
+		reload()
+	}
+
 	return (
 		<div className='flex flex-col gap-y-6'>
-			{categories.map((c) => (
-				<div key={c.id}>
+			{categories.map((c, i) => (
+				<div key={c.id} className='flex gap-x-6'>
+					<ChangeOrderArrows
+						onMoveDown={() => swapOrder(c, categories[i + 1])}
+						onMoveUp={() => swapOrder(c, categories[i - 1])}
+						up={i > 0}
+						down={i < categories.length - 1}
+					/>
 					{selectedCategory === c.id ? (
 						<div className='px-4 py-6 flex gap-x-8 border'>
 							<div className='flex-1'>
@@ -78,7 +90,10 @@ export default function CategoryList({ reload, categories, userId }: Props) {
 							</div>
 						</div>
 					) : (
-						<div onClick={() => setSelectedCategory(c.id)}>
+						<div
+							className='flex-1'
+							onClick={() => setSelectedCategory(c.id)}
+						>
 							<CategoryListItem item={c} />
 						</div>
 					)}
@@ -94,6 +109,27 @@ function CategoryListItem({ item }: { item: TCategory }) {
 			<CategoryDot colorHex={item.colorHex} />
 			<div className='basis-12'>{item.abbreviation}</div>
 			<div className='flex-1'>{item.name}</div>
+		</div>
+	)
+}
+
+function ChangeOrderArrows({
+	onMoveUp,
+	onMoveDown,
+	up,
+	down
+}: {
+	onMoveUp: () => void
+	onMoveDown: () => void
+	up: boolean
+	down: boolean
+}) {
+	return (
+		<div className='flex self-center gap-x-2 basis-11'>
+			{up ? <FontAwesomeIcon icon='arrow-up' onClick={onMoveUp} /> : null}
+			{down ? (
+				<FontAwesomeIcon icon='arrow-down' onClick={onMoveDown} />
+			) : null}
 		</div>
 	)
 }

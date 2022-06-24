@@ -8,8 +8,8 @@ import useGetTrackersForDay from '../apiHooks/getTrackersForDay'
 import LoadingBox from '../common/LoadingBox'
 import TimetrackerForm from './TimetrackerForm'
 import TimetrackerList from './TimetrackerList'
-import dayjs from 'dayjs'
 import TimetrackerSelectedDateController from './TimetrackerSelectedDateController'
+import { TimeUtils } from '../../types/utils/time'
 
 type Props = {
 	user: User
@@ -37,6 +37,7 @@ export default function TimetrackerPage({ user }: Props) {
 		info: ''
 	})
 	const timetracker = new Timetracker(user.uid)
+	const timeUtils = new TimeUtils()
 
 	function setItemStart(timestamp: number) {
 		setInitialValues((v) => ({
@@ -51,7 +52,7 @@ export default function TimetrackerPage({ user }: Props) {
 			setInitialValues((v) => ({
 				...v,
 				start: d.end,
-				end: d.end
+				end: new Date().getTime()
 			}))
 		} else {
 			setInitialValues((v) => ({
@@ -103,7 +104,7 @@ export default function TimetrackerPage({ user }: Props) {
 
 			<section className='flex-none'>
 				<TimetrackerForm
-					shouldSetEndToNow={dayjs(selectedDate).isToday()}
+					shouldSetEndToNow={timeUtils.isToday(selectedDate)}
 					onSubmit={async (data) => {
 						const errors = await timetracker.create(data)
 						if (errors) {
