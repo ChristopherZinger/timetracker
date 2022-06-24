@@ -1,4 +1,12 @@
 {
-  "indexes": [],
-  "fieldOverrides": []
+	"indexes": [
+		{
+			"collectionId": "category",
+			"fields": [
+				{ "fieldPath": "isActive", "mode": "ASCENDING" },
+				{ "fieldPath": "order", "mode": "ASCENDING" }
+			]
+		}
+	],
+	"fieldOverrides": []
 }
