@@ -26,29 +26,33 @@ export default function TimetrackerSelectedDateController({
 	const isSelectedDateToday = timeUtils.isToday(selectedDate)
 
 	return (
-		<nav className='flex gap-x-10'>
-			<button
-				onClick={() => onDateChange(getDateDayBefore(selectedDate))}
-			>
-				<FontAwesomeIcon icon='arrow-left' />
-			</button>
-			<button onClick={() => onDateChange(new Date())}>
-				{!isSelectedDateToday ? 'go to ' : ''}
-				<span
-					className={`${
-						isSelectedDateToday ? 'font-bold underline' : ''
-					}`}
-				>
-					Today
-				</span>
-			</button>
-			{isSelectedDateToday ? null : (
+		<nav className='flex justify-between'>
+			<div className='flex gap-x-4'>
 				<button
-					onClick={() => onDateChange(getDateDayAfter(selectedDate))}
+					onClick={() => onDateChange(getDateDayBefore(selectedDate))}
 				>
-					<FontAwesomeIcon icon='arrow-right' />
+					<FontAwesomeIcon icon='arrow-left' />
 				</button>
-			)}
+				<button onClick={() => onDateChange(new Date())}>
+					{!isSelectedDateToday ? 'go to ' : ''}
+					<span
+						className={`${
+							isSelectedDateToday ? 'font-bold underline' : ''
+						}`}
+					>
+						Today
+					</span>
+				</button>
+				{isSelectedDateToday ? null : (
+					<button
+						onClick={() =>
+							onDateChange(getDateDayAfter(selectedDate))
+						}
+					>
+						<FontAwesomeIcon icon='arrow-right' />
+					</button>
+				)}
+			</div>
 			<input
 				type='date'
 				name='date'

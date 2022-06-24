@@ -10,6 +10,9 @@ import TimetrackerForm from './TimetrackerForm'
 import TimetrackerList from './TimetrackerList'
 import TimetrackerSelectedDateController from './TimetrackerSelectedDateController'
 import { TimeUtils } from '../../types/utils/time'
+import { DaySummary } from '../../types/domains/DaySummary'
+import useGetDaySummary from '../apiHooks/getDaySummary'
+import DoughnutTile from '../dashboard/DoughnutTile'
 
 type Props = {
 	user: User
@@ -36,8 +39,15 @@ export default function TimetrackerPage({ user }: Props) {
 		end: selectedDate.getTime(),
 		info: ''
 	})
+	const { reload: reloadDaySummary } = useGetDaySummary(selectedDate)
 	const timetracker = new Timetracker(user.uid)
 	const timeUtils = new TimeUtils()
+	const daySummary = new DaySummary(user.uid)
+
+	async function regenerateDateSummary() {
+		await daySummary.createDaySummaryForDate(selectedDate)
+		await regenerateDateSummary()
+	}
 
 	function setItemStart(timestamp: number) {
 		setInitialValues((v) => ({
@@ -82,44 +92,58 @@ export default function TimetrackerPage({ user }: Props) {
 	}
 
 	return (
-		<div className='w-9/12 mx-auto mb-20 mt-10 px-10 gap-y-8 flex flex-col flex-1 '>
-			<section>
-				<TimetrackerSelectedDateController
-					selectedDate={selectedDate}
-					onDateChange={(date) => setSelectedDate(date)}
-				/>
-			</section>
-			<section className='relative flex-1'>
-				<div className='absolute h-full overflow-auto w-full'>
-					{trackersForSelectedDate?.length && categories ? (
-						<TimetrackerList
-							list={trackersForSelectedDate}
-							categories={categories}
-							reload={() => reload(selectedDate)}
-							userId={user.uid}
-						/>
-					) : null}
-				</div>
-			</section>
+		<div className='mb-20 mt-10 px-10 flex flex-1 gap-x-12 '>
+			<div className='flex flex-col  gap-y-8 w-9/12'>
+				<section className='relative flex-1'>
+					<div className='absolute h-full overflow-auto w-full'>
+						{trackersForSelectedDate?.length && categories ? (
+							<TimetrackerList
+								list={trackersForSelectedDate}
+								categories={categories}
+								onTrackerUpdate={async () => {
+									regenerateDateSummary()
+									reload(selectedDate)
+								}}
+								userId={user.uid}
+							/>
+						) : null}
+					</div>
+				</section>
 
-			<section className='flex-none'>
-				<TimetrackerForm
-					shouldSetEndToNow={timeUtils.isToday(selectedDate)}
-					onSubmit={async (data) => {
-						const errors = await timetracker.create(data)
-						if (errors) {
-							setTimetrackerFormErrors(errors)
-						} else {
-							setTimetrackerFormErrors({})
-							setItemStart(data.end)
-							reload(selectedDate)
-						}
-					}}
-					errors={timetrackerFormErrors}
-					categories={categories}
-					initialValues={initialValues}
-				/>
-			</section>
+				<section className='flex-none'>
+					<TimetrackerForm
+						shouldSetEndToNow={timeUtils.isToday(selectedDate)}
+						onSubmit={async (data) => {
+							const errors = await timetracker.create(data)
+							if (errors) {
+								setTimetrackerFormErrors(errors)
+							} else {
+								setTimetrackerFormErrors({})
+								setItemStart(data.end)
+								reload(selectedDate)
+								reloadDaySummary()
+							}
+						}}
+						errors={timetrackerFormErrors}
+						categories={categories}
+						initialValues={initialValues}
+					/>
+				</section>
+			</div>
+			<div className='flex-1'>
+				<section className='mb-10'>
+					<TimetrackerSelectedDateController
+						selectedDate={selectedDate}
+						onDateChange={(date) => {
+							setSelectedDate(date)
+							reloadDaySummary(date)
+						}}
+					/>
+				</section>
+				{selectedDate ? (
+					<DoughnutTile date={selectedDate} userId={user.uid} />
+				) : null}
+			</div>
 		</div>
 	)
 }

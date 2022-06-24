@@ -5,21 +5,21 @@ import TimetrackerListItem from './TimetrackerListItem'
 type Props = {
 	list: TTracker[]
 	categories: TCategory[]
-	reload: () => Promise<void>
+	onTrackerUpdate: () => Promise<void>
 	userId: string
 }
 
 export default function TimetrackerList({
 	list,
 	categories,
-	reload,
+	onTrackerUpdate,
 	userId
 }: Props) {
 	const timetracker = new Timetracker(userId)
 
-	async function onTrackerUpdate(tracker: TTracker) {
+	async function _onTrackerUpdate(tracker: TTracker) {
 		await timetracker.update(tracker)
-		await reload()
+		await onTrackerUpdate()
 	}
 
 	return (
@@ -29,7 +29,7 @@ export default function TimetrackerList({
 					item={item}
 					key={item.id}
 					categories={categories}
-					onEdit={onTrackerUpdate}
+					onEdit={_onTrackerUpdate}
 				/>
 			))}
 		</>
