@@ -31,7 +31,7 @@ export default function TimetrackerPage({ user }: Props) {
 		data: trackersForSelectedDate,
 		isLoading: isLoadingTrackers,
 		error: trackersError,
-		reload
+		reload: reloadTrackersForDate
 	} = useGetTrackersForDay(selectedDate)
 	const [initialValues, setInitialValues] = useState<TTrackerInput>({
 		start: selectedDate.getTime(),
@@ -39,15 +39,11 @@ export default function TimetrackerPage({ user }: Props) {
 		end: selectedDate.getTime(),
 		info: ''
 	})
-	const { reload: reloadDaySummary } = useGetDaySummary(selectedDate)
+	const { reload: loadDaySummaryForSelectedDate } =
+		useGetDaySummary(selectedDate)
 	const timetracker = new Timetracker(user.uid)
 	const timeUtils = new TimeUtils()
 	const daySummary = new DaySummary(user.uid)
-
-	async function regenerateDateSummary() {
-		await daySummary.createDaySummaryForDate(selectedDate)
-		await regenerateDateSummary()
-	}
 
 	function setItemStart(timestamp: number) {
 		setInitialValues((v) => ({
@@ -101,8 +97,10 @@ export default function TimetrackerPage({ user }: Props) {
 								list={trackersForSelectedDate}
 								categories={categories}
 								onTrackerUpdate={async () => {
-									regenerateDateSummary()
-									reload(selectedDate)
+									await daySummary.createOrUpdateDaySummaryForDate(
+										selectedDate
+									)
+									reloadTrackersForDate(selectedDate)
 								}}
 								userId={user.uid}
 							/>
@@ -115,13 +113,15 @@ export default function TimetrackerPage({ user }: Props) {
 						shouldSetEndToNow={timeUtils.isToday(selectedDate)}
 						onSubmit={async (data) => {
 							const errors = await timetracker.create(data)
+							await daySummary.createOrUpdateDaySummaryForDate(
+								selectedDate
+							)
 							if (errors) {
 								setTimetrackerFormErrors(errors)
 							} else {
 								setTimetrackerFormErrors({})
 								setItemStart(data.end)
-								reload(selectedDate)
-								reloadDaySummary()
+								await reloadTrackersForDate(selectedDate)
 							}
 						}}
 						errors={timetrackerFormErrors}
@@ -136,7 +136,7 @@ export default function TimetrackerPage({ user }: Props) {
 						selectedDate={selectedDate}
 						onDateChange={(date) => {
 							setSelectedDate(date)
-							reloadDaySummary(date)
+							loadDaySummaryForSelectedDate(date)
 						}}
 					/>
 				</section>
