@@ -9,12 +9,14 @@ type Props = {
 	item: TTracker
 	categories: TCategory[]
 	onEdit: (data: TTracker) => Promise<void>
+	onRemove: (tracker: TTracker) => Promise<void>
 }
 
 export default function TimetrackerListItem({
 	item,
 	categories,
-	onEdit
+	onEdit,
+	onRemove
 }: Props) {
 	const timeUtils = new TimeUtils()
 	const [editMode, setEditMode] = useState(false)
@@ -24,7 +26,12 @@ export default function TimetrackerListItem({
 		<>
 			{editMode ? (
 				<div>
-					<button onClick={() => setEditMode(false)}>close</button>
+					<div className='flex gap-x-6 px-6'>
+						<button onClick={() => setEditMode(false)}>
+							close
+						</button>
+						<button onClick={() => onRemove(item)}>remove</button>
+					</div>
 					<TimetrackerForm
 						onSubmit={(d) => onEdit({ ...d, id: item.id })}
 						categories={categories}

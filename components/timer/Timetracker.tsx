@@ -75,6 +75,11 @@ export default function TimetrackerPage({ user }: Props) {
 		}
 	}, [categories])
 
+	const onTrackerCRUD = async () => {
+		await daySummary.createOrUpdateDaySummaryForDate(selectedDate)
+		await reloadTrackersForDate(selectedDate)
+	}
+
 	if (isLoadingCategories || isLoadingTrackers) {
 		return <LoadingBox />
 	}
@@ -96,12 +101,8 @@ export default function TimetrackerPage({ user }: Props) {
 							<TimetrackerList
 								list={trackersForSelectedDate}
 								categories={categories}
-								onTrackerUpdate={async () => {
-									await daySummary.createOrUpdateDaySummaryForDate(
-										selectedDate
-									)
-									reloadTrackersForDate(selectedDate)
-								}}
+								onTrackerUpdate={onTrackerCRUD}
+								onRemoveTracker={onTrackerCRUD}
 								userId={user.uid}
 							/>
 						) : null}

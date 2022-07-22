@@ -8,7 +8,8 @@ import {
   setDoc,
   where,
   orderBy,
-  updateDoc
+  updateDoc,
+  deleteDoc
 } from 'firebase/firestore'
 import { InputErrorsMap, Validator } from '../utils/validator'
 import { Timeframe, TimeUtils } from '../utils/time'
@@ -39,6 +40,10 @@ export class Timetracker {
       firestore,
       `${Collections.user}/${this.userId}/${Collections.trackers}`
     ).withConverter(getGenericConverter<TTracker>())
+  }
+
+  public async remove (tracker: TTracker): Promise<void> {
+    await deleteDoc(doc(this.collection, tracker.id))
   }
 
   public async create (data: TTrackerInput): Promise<void | InputErrorsMap> {
