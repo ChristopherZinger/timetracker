@@ -56,13 +56,10 @@ export class DaySummary {
     this.category = new Category(this.userId)
 
     const firestore = getFirestore()
-
     this.collection = collection(
       firestore,
       `${Collections.user}/${this.userId}/${Collections.daySummary}`
     ).withConverter(getGenericConverter<TDaySummary>())
-
-
   }
 
   private async calculateDaySummaryForDate (date: Date): Promise<TDaySummaryInput> {
@@ -134,12 +131,12 @@ export class DaySummary {
     }
   }
 
-  public async createDaySummaryForDate (date: Date) {
+  public async createOrUpdateDaySummaryForDate (date: Date) {
     const summary = await this.calculateDaySummaryForDate(date)
-    await this.create(summary)
+    await this.createOrUpdate(summary)
   }
 
-  private async create (summary: TDaySummaryInput): Promise<void> {
+  private async createOrUpdate (summary: TDaySummaryInput): Promise<void> {
     const { day: { day, month, year } } = summary
     const id = `${year}:${month}:${day}`
     await setDoc(doc(this.collection, id), summary)
@@ -150,6 +147,18 @@ export class DaySummary {
     const month = date.getMonth()
     const year = date.getFullYear()
 
-    return (await getDoc(doc(this.collection, `${year}:${month}:${day}`))).data()
+    if (this.timeutils.isAfterToday(date)) {
+      throw new AppError('You are not allowed to generate day summary for future')
+    }
+
+    const daySummaryRef = doc(this.collection, `${year}:${month}:${day}`)
+    const snapshot = await getDoc(daySummaryRef)
+
+    if (snapshot.exists()) {
+      return snapshot.data()
+    } else {
+      await this.createOrUpdateDaySummaryForDate(date)
+      return (await getDoc(daySummaryRef)).data()
+    }
   }
 }
